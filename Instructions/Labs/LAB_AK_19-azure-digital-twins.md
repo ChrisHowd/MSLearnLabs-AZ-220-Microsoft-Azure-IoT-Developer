@@ -61,104 +61,60 @@ This lab assumes that the following Azure resources are available:
 | TSI            | tsi-az220-training-{your-id} |
 | TSI Access Policy | access1                   |
 
-> **Note**:  The **lab19-setup.azcli** script is written to run in a **bash** shell environment - the easiest way to execute this is in the Azure Cloud Shell.
+To ensure these resources are available, complete the following tasks.
 
-1. Using a browser, open the [Azure Cloud Shell](https://shell.azure.com/) and login with the Azure subscription you are using for this course.
+1. Select **Deploy to Azure**:
 
-1. If you are prompted about setting up storage for Cloud Shell, accept the defaults.
+    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2flab19.json)
 
-1. Verify that the Cloud Shell is using **Bash**.
+1. If prompted, login to the **Azure Portal**.
 
-    The dropdown in the top-left corner of the Azure Cloud Shell page is used to select the environment. Verify that the selected dropdown value is **Bash**.
+    The **Custom deployment** page will be displayed.
 
-1. On the Cloud Shell toolbar, click **Upload/Download files** (fourth button from the right).
+1. Under **Project details**, in the **Subscription** dropdown, ensure that the Azure subscription that you intend to use for this course is selected.
 
-1. In the dropdown, click **Upload**.
+1. In the **Resource group** dropdown, select **rg-az220**.
 
-1. In the file selection dialog, navigate to the folder location of the GitHub lab files that you downloaded when you configured your development environment.
+    > **NOTE**: If **rg-az220** is not listed:
+    >
+    > 1. Under the **Resource group** dropdown, click **Create new**.
+    > 1. Under **Name**, enter **rg-az220**.
+    > 1. Click **OK**.
 
-    In Lab 3 of this course, "Setup the Development Environment", you cloned the GitHub repository containing lab resources by downloading a ZIP file and extracting the contents locally. The extracted folder structure includes the following folder path:
+1. Under **Instance details**, in the **Region** dropdown, select the region closest to you.
 
-    * Allfiles
-      * Labs
-          * 19-Azure Digital Twins
-            * Setup
+    > **NOTE**: If the **rg-az220** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
 
-    The lab19-setup.azcli script file is located in the Setup folder for lab 19.
+1. In the **Your ID** field, enter the unique ID you created in Exercise 1.
 
-1. Select the **lab19-setup.azcli** file, and then click **Open**.
+1. In the **Course ID** field, enter **az220**.
 
-    A notification will appear when the file upload has completed.
+1. To determine the current user object ID, open the **Cloud Shell** and execute the following command:
 
-1. To verify that the correct file has uploaded, enter the following command:
-
-    ```bash
-    ls
+    ```sh
+    az ad signed-in-user show --query objectId -o tsv
     ```
 
-    The `ls` command lists the content of the current directory. You should see the lab19-setup.azcli file listed.
+    Copy the displayed object ID.
 
-1. To create a directory for this lab that contains the setup script and then move into that directory, enter the following Bash commands:
+1. In the **Object ID** field, enter the object ID copied from the above step.
 
-    ```bash
-    mkdir lab19
-    mv lab19-setup.azcli lab19
-    cd lab19
-    ```
+1. To validate the template, click **Review and create**.
 
-    These commands will create a directory for this lab, move the **lab19-setup.azcli** file into that directory, and then change directory to make the new directory the current working directory.
+1. If validation passes, click **Create**.
 
-1. To ensure the **lab19-setup.azcli** has the execute permission, enter the following command:
+    The deployment will start.
 
-    ```bash
-    chmod +x lab19-setup.azcli
-    ```
+1. Once the deployment has completed, in the left navigation area, to review any output values from the template,  click **Outputs**.
 
-1. On the Cloud Shell toolbar, to enable access to the lab19-setup.azcli file, click **Open Editor** (second button from the right - **{ }**).
+    Make a note of the outputs for use later:
 
-1. In the **Files** list, to expand the lab19 folder and open the script file, click **lab19**, and then click **lab19-setup.azcli**.
+    * connectionString
+    * deviceConnectionString
+    * devicePrimaryKey
+    * storageAccountName
 
-    The editor will now show the contents of the **lab19-setup.azcli** file.
-
-1. In the editor, update the values of the `{your-id}` and `{your-location}` variables.
-
-    Referencing the sample below as an example, you need to set `{your-id}` to the Unique ID you created at the start of this course - i.e. **cah191211**, and set `{your-location}` to the location that matches your resource group.
-
-    ```bash
-    #!/bin/bash
-
-    # Change these values!
-    YourID="{your-id}"
-    Location="{your-location}"
-    ```
-
-    > **Note**:  The `{your-location}` variable should be set to the short name for the region where you are deploying all of your resources. You can see a list of the available locations and their short-names (the **Name** column) by entering this command:
-
-    ```bash
-    az account list-locations -o Table
-
-    DisplayName           Latitude    Longitude    Name
-    --------------------  ----------  -----------  ------------------
-    East Asia             22.267      114.188      eastasia
-    Southeast Asia        1.283       103.833      southeastasia
-    Central US            41.5908     -93.6208     centralus
-    East US               37.3719     -79.8164     eastus
-    East US 2             36.6681     -78.3889     eastus2
-    ```
-
-1. In the top-right of the editor window, to save the changes made to the file and close the editor, click **...**, and then click **Close Editor**.
-
-    If prompted to save, click **Save** and the editor will close.
-
-    > **Note**:  You can use **CTRL+S** to save at any time and **CTRL+Q** to close the editor.
-
-1. To create the resources required for this lab, enter the following command:
-
-    ```bash
-    ./lab19-setup.azcli
-    ```
-
-    This will take a few minutes to run. You will see output as each step completes.
+The resources have now been created.
 
 #### Task 2 - Verify tools
 
