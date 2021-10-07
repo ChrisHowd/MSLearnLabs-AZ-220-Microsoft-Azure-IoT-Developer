@@ -69,22 +69,6 @@ As noted above, when you create these types of resources, you will be provided w
     | Device Provisioning Service | dps-az220-training-{your-id} | dps-az220-training-cah191216 |
     | Azure Storage Account <br/>(name must be lower-case and no dashes) | az220storage{your-id} | az220storagecah191216 |
 
-1. Review the following example for applying your unique ID within a Bash script:
-
-    In some of the labs later in this course, you will be instructed to apply your unique ID value within a Bash script. The Bash script file, which is provided for you, might include code that is similar to the following:
-
-    ```bash
-    #!/bin/bash
-
-    YourID="{your-id}"
-    RGName="@lab.CloudResourceGroup(ResourceGroup1).Name"
-    IoTHubName="iot-az220-training-$YourID"
-    ```
-
-    In the code above, if the value of your unique ID is `cah191216`, then the line containing `YourID="{your-id}"` should be updated to `YourID="cah191216"`.
-
-    > **Note**: Notice that you do not change the `$YourID` value on the final code line. If it isn't `{your-id}` then don't replace it.
-
 1. Review the following example for applying your unique ID within C# code:
 
     In some of the labs later in this course, you will be instructed to apply your unique ID value within C# source files. The C# source code, which will be provided to you, might include a code section that looks similar to the following:
