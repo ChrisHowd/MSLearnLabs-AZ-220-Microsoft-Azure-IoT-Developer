@@ -87,7 +87,7 @@ As noted above, when you create these types of resources, you will be provided w
 
     As you may have already considered, the Resource Group that you created in the previous lab did not include your unique ID value.
 
-    Some resources, like the Resource Group, must have a unique name within your subscription, but the name does not need to be globally unique. Therefore, each student taking this course can use the resource group name: **@lab.CloudResourceGroup(ResourceGroup1).Name**. Of course this is only true if each student uses their own subscription, but that should be the case.
+    Some resources, like the Resource Groups, must have a unique name within your subscription, but the name does not need to be globally unique.
 
 1. Apply an additional `01` or `02` if it turns out that your unique ID isn't so unique.
 
@@ -142,7 +142,7 @@ In this exercise, you will use the Azure portal to create and configure your IoT
 1. On the **Marketplace** blade, click the **IoT Hub** search result.
 
     > **Note**:
-    > A **Create** action is shown at the bottom of the **IoT Hub** search result - that will navigate directly to the IoT Hub creation view. In normal use you may chose to click this - for the purpose of the tutorial, click anywhere in the main body of the **IoT Hub** search result.
+    > A **Create** action is shown on the **IoT Hub** search result - that will navigate directly to the IoT Hub creation view. In normal use you may chose to click this - for the purpose of the tutorial, click anywhere in the main body of the **IoT Hub** search result.
 
 1. On the **IoT Hub** blade, click **Usage Information + Support**
 
@@ -169,15 +169,7 @@ In this exercise, you will use the Azure portal to create and configure your IoT
 
 1. To the right of **Resource group**, open the dropdown, and then click **@lab.CloudResourceGroup(ResourceGroup1).Name**
 
-    This is the resource group that you created in the previous lab. You will be grouping the resources that you create for this course together in the same resource group. It is best practice to group related resources in this way, and will help you to clean up your resources when you no longer need them.
-
-1. To the right of **Region**, open the drop-down list and select the same region that you selected for your resource group.
-
-    > **Note**: One of the upcoming labs will use Event Grid. To support this future lab, you need to select a Region that supports Event Grid. For the current list of regions that support Event Grid, see the following link: [Products available by region](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=event-grid&regions=all)
-
-    As you saw previously, Azure is supported by a series of datacenters that are placed in regions all around the world. When you create something in Azure, you deploy it to one of these datacenter locations.
-
-    > **Note**:  When picking a region to host your resources, keep in mind that picking a region close to your end users will decrease load/response times. In a production environment, if you are on the other side of the world from your end users, you should not be picking the region nearest you.
+    This is the resource group that has been created for you. You will be grouping the resources that you create for this course together in the same resource group. It is best practice to group related resources in this way, and will help you to clean up your resources when you no longer need them.
 
 1. To the right of **IoT hub name**, enter a globally unique name for your IoT Hub as follows:
 
@@ -198,6 +190,14 @@ In this exercise, you will use the Azure portal to create and configure your IoT
     > **Note**:  Azure will ensure that the name you enter is unique. If the name that you enter is not unique, Azure will display a message below the name field as a warning. If you see the warning message, you should update your unique ID. Try appending your unique ID with '**00**', or '**01**', or '**02**, 'etc. as necessary to achieve a globally unique name.
 
     > **Note**: Some resource names do not allow extended characters like the dash (-) or underscore (_), so stick with numeric digits when updating your unique ID.
+
+1. To the right of **Region**, open the drop-down list and select **@lab.CloudResourceGroup(ResourceGroup1).Location**.
+
+    > **Note**: One of the upcoming labs will use Event Grid. To support this future lab, you need to select a Region that supports Event Grid. For the current list of regions that support Event Grid, see the following link: [Products available by region](https://azure.microsoft.com/en-us/global-infrastructure/services/?products=event-grid&regions=all)
+
+    As you saw previously, Azure is supported by a series of datacenters that are placed in regions all around the world. When you create something in Azure, you deploy it to one of these datacenter locations.
+
+    > **Note**:  When picking a region to host your resources, keep in mind that picking a region close to your end users will decrease load/response times. In a production environment, if you are on the other side of the world from your end users, you should not be picking the region nearest you.
 
 1. At the top of the blade, click **Management**.
 
@@ -222,21 +222,23 @@ In this exercise, you will use the Azure portal to create and configure your IoT
 
     Azure Defender for IoT is on by default because security is important to your IoT solution. You will be exploring Azure Defender for IoT in Lab 19 of this course. Disabling it for now ensures that the Lab 19 instructions work as expected.
 
-    Currently, you can enable Azure Defender at the subscription level, through the Azure portal. Azure Defender is free for the first 30 days. Any usage beyond 30 days will be automatically  charged as per the pricing information detailed [here](https://azure.microsoft.com/en-us/pricing/details/azure-defender/).
+    Currently, you can enable Azure Defender at the subscription level, through the Azure portal. Azure Defender is free for the first 30 days. Any usage beyond 30 days will be automatically charged as per the pricing information detailed [here](https://azure.microsoft.com/en-us/pricing/details/azure-defender/).
 
-1. Expand **Advanced Settings**, and then ensure that **Device-to-cloud partitions** is set to **4**.
+1. Review the table that summarizes the current settings and costs.
+
+1. Under **Advanced Settings** (you may need to scroll down), ensure that **Device-to-cloud partitions** is set to **4**.
 
     The number of partitions relates the device-to-cloud messages to the number of simultaneous readers of these messages. Most IoT hubs will only need four partitions, which is the default value. For this course you will create your IoT Hub using the default number of partitions.
 
 1. Within the **Transport Layer Security (TLS)** section, ensure the **Minimum TLS Version** is set to **1.0**.
 
-    IoT Hub uses Transport Layer Security (TLS) to secure connections from IoT devices and services. Three versions of the TLS protocol are currently supported, namely versions 1.0, 1.1, and 1.2.
+    IoT Hub uses Transport Layer Security (TLS) to secure connections from IoT devices and services. Two versions of the TLS protocol are currently supported, namely versions 1.0 and 1.2.
 
     > [!Important]
     > The **Minimum TLS Version** property cannot be changed once your IoT Hub resource is created. It is therefore essential that you properly test and validate that all your IoT devices and services are compatible with TLS 1.2 and the recommended ciphers in advance. You can learn more about IoT Hub and TLS below:
     > * [Transport Layer Security (TLS) support in IoT Hub](https://docs.microsoft.com/azure/iot-hub/iot-hub-tls-support)
 
-1. At the top of the blade, click **Review + create**.
+1. At the bottom of the blade, click **Review + create**.
 
     Take a minute to review the settings that your provided.
 
@@ -360,19 +362,19 @@ There are several methods that you can use to create an instance of the IoT Hub 
 
     Next, you need to specify information about the Hub and your subscription. The following steps walk you through the settings, explaining each of the fields as you fill them in.
 
-1. Under **Name**, enter a globally unique name for your IoT Hub Device Provisioning Service as follows:
-
-    To provide a globally unique name, enter **dps-az220-training-{your-id}** (remember to replace **{your-id}** with the unique ID you created in Exercise 1).
-
-    For example: **dps-az220-training-cah191216**
-
 1. Under **Subscription**, ensure that the subscription you are using for this course is selected.
 
 1. Under **Resource Group**, open the dropdown, and then click **@lab.CloudResourceGroup(ResourceGroup1).Name**
 
     You will be grouping the resources that you create for this course together in the same resource group. It's a best practice to group related resources in this way, and will help you to clean up your resources when you no longer need them.
 
-1. Under **Location**, open the drop-down list and select the same region that you selected for your resource group.
+1. Under **Name**, enter a globally unique name for your IoT Hub Device Provisioning Service as follows:
+
+    To provide a globally unique name, enter **dps-az220-training-{your-id}** (remember to replace **{your-id}** with the unique ID you created in Exercise 1).
+
+    For example: **dps-az220-training-cah191216**
+
+1. Under **Region**, open the drop-down list and select **@lab.CloudResourceGroup(ResourceGroup1).Location**.
 
     > **Note**: When picking a datacenter to host your resources, keep in mind that picking a datacenter close to your end users will decrease load/response times. If you are on the other side of the world from your end users, you should not be picking the datacenter nearest you.
 
