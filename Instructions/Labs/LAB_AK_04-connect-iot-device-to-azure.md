@@ -43,9 +43,9 @@ This lab assumes that the following Azure resources are available:
 
 To ensure these resources are available, complete the following tasks.
 
-1. Select **Deploy to Azure**:
+1. To create the required resources, open a new browser tab and enter the following address:
 
-    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2fAllfiles%2FARM%2Flab04.json)
+    https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2fAllfiles%2FARM%2Flab04.json
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -54,12 +54,6 @@ To ensure these resources are available, complete the following tasks.
 1. Under **Project details**, in the **Subscription** dropdown, ensure that the Azure subscription that you intend to use for this course is selected.
 
 1. In the **Resource group** dropdown, select **@lab.CloudResourceGroup(ResourceGroup1).Name**.
-
-    > **NOTE**: If **@lab.CloudResourceGroup(ResourceGroup1).Name** is not listed:
-    >
-    > 1. Under the **Resource group** dropdown, click **Create new**.
-    > 1. Under **Name**, enter **@lab.CloudResourceGroup(ResourceGroup1).Name**.
-    > 1. Click **OK**.
 
 1. Under **Instance details**, in the **Region** dropdown, select the region closest to you.
 
