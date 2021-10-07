@@ -1,0 +1,113 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "IotHubs_iot_az220_training_dm100621_connectionString": {
+            "type": "SecureString"
+        },
+        "IotHubs_iot_az220_training_dm100621_containerName": {
+            "type": "SecureString"
+        },
+        "IotHubs_iot_az220_training_dm100621_name": {
+            "defaultValue": "iot-az220-training-dm100621",
+            "type": "String"
+        },
+        "provisioningServices_dps_az220_training_dm100621_name": {
+            "defaultValue": "dps-az220-training-dm100621",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Devices/IotHubs",
+            "apiVersion": "2021-07-01",
+            "name": "[parameters('IotHubs_iot_az220_training_dm100621_name')]",
+            "location": "westus2",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "identity": {
+                "type": "None"
+            },
+            "properties": {
+                "ipFilterRules": [],
+                "eventHubEndpoints": {
+                    "events": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 4
+                    }
+                },
+                "routing": {
+                    "endpoints": {
+                        "serviceBusQueues": [],
+                        "serviceBusTopics": [],
+                        "eventHubs": [],
+                        "storageContainers": []
+                    },
+                    "routes": [],
+                    "fallbackRoute": {
+                        "name": "$fallback",
+                        "source": "DeviceMessages",
+                        "condition": "true",
+                        "endpointNames": [
+                            "events"
+                        ],
+                        "isEnabled": true
+                    }
+                },
+                "storageEndpoints": {
+                    "$default": {
+                        "sasTtlAsIso8601": "PT1H",
+                        "connectionString": "[parameters('IotHubs_iot_az220_training_dm100621_connectionString')]",
+                        "containerName": "[parameters('IotHubs_iot_az220_training_dm100621_containerName')]"
+                    }
+                },
+                "messagingEndpoints": {
+                    "fileNotifications": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "enableFileUploadNotifications": false,
+                "cloudToDevice": {
+                    "maxDeliveryCount": 10,
+                    "defaultTtlAsIso8601": "PT1H",
+                    "feedback": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "features": "None",
+                "disableLocalAuth": false,
+                "allowedFqdnList": []
+            }
+        },
+        {
+            "type": "Microsoft.Devices/provisioningServices",
+            "apiVersion": "2020-03-01",
+            "name": "[parameters('provisioningServices_dps_az220_training_dm100621_name')]",
+            "location": "westus2",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "properties": {
+                "state": "Active",
+                "provisioningState": "Succeeded",
+                "iotHubs": [
+                    {
+                        "connectionString": "HostName=iot-az220-training-dm100621.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=****",
+                        "location": "westus2"
+                    }
+                ],
+                "allocationPolicy": "Hashed"
+            }
+        }
+    ]
+}
