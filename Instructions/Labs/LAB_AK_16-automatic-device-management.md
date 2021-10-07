@@ -61,7 +61,7 @@ This lab assumes the following Azure resources are available:
 
 | Resource Type | Resource Name |
 | :-- | :-- |
-| Resource Group | rg-az220 |
+| Resource Group | @lab.CloudResourceGroup(ResourceGroup1).Name |
 | IoT Hub | iot-az220-training-{your-id} |
 | IoT Device | sensor-th-0155 |
 
@@ -69,7 +69,7 @@ To ensure these resources are available, complete the following tasks.
 
 1. Select **Deploy to Azure**:
 
-    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2flab16.json)
+    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2fAllfiles%2FARM%2Flab16.json)
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -77,17 +77,17 @@ To ensure these resources are available, complete the following tasks.
 
 1. Under **Project details**, in the **Subscription** dropdown, ensure that the Azure subscription that you intend to use for this course is selected.
 
-1. In the **Resource group** dropdown, select **rg-az220**.
+1. In the **Resource group** dropdown, select **@lab.CloudResourceGroup(ResourceGroup1).Name**.
 
-    > **NOTE**: If **rg-az220** is not listed:
+    > **NOTE**: If **@lab.CloudResourceGroup(ResourceGroup1).Name** is not listed:
     >
     > 1. Under the **Resource group** dropdown, click **Create new**.
-    > 1. Under **Name**, enter **rg-az220**.
+    > 1. Under **Name**, enter **@lab.CloudResourceGroup(ResourceGroup1).Name**.
     > 1. Click **OK**.
 
 1. Under **Instance details**, in the **Region** dropdown, select the region closest to you.
 
-    > **NOTE**: If the **rg-az220** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
+    > **NOTE**: If the **@lab.CloudResourceGroup(ResourceGroup1).Name** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
 
 1. In the **Your ID** field, enter the unique ID you created in Exercise 1.
 
@@ -108,281 +108,81 @@ To ensure these resources are available, complete the following tasks.
     * devicePrimaryKey
 
 The resources have now been created.
-### Exercise 2: Write code for a simulated device that implements firmware update
 
-In this exercise, you will create a simulated device that will manage the device twin desired property changes and will trigger a local process simulating a firmware update. The process that you implement for launching the firmware update will be similar to the process used for a firmware update on a real device. The process of downloading the new firmware version, installing the firmware update, and restarting the device is simulated.
+### Exercise 2: Examine code for a simulated device that implements firmware update
+
+In this exercise, you will review a simulated device that manages the device twin desired property changes and will trigger a local process simulating a firmware update. The process that you implement for launching the firmware update will be similar to the process used for a firmware update on a real device. The process of downloading the new firmware version, installing the firmware update, and restarting the device is simulated.
 
 You will use the Azure Portal to configure and execute a firmware update using the device twin properties. You will configure the device twin properties to transfer the configuration change request to the device and monitor the progress.
 
-#### Task 1: Create the device simulator app
+#### Task 1: Examine the device simulator app
 
-In this task, you will use Visual Studio Code to create a new console app.
+In this task, you will use Visual Studio Code to review the console app.
 
-1. Open Visual Studio Code.
-
-    If you completed Lab 3 of this course, you should have [.NET Core](https://dotnet.microsoft.com/download) and the [C# extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.csharp) installed in your dev environment.
-
-1. On the **Terminal** menu, click **New Terminal**.
-
-1. At the Terminal command prompt, enter the following commands:
-
-    ```cmd/sh
-    mkdir fwupdatedevice
-    cd fwupdatedevice
-    ```
-
-    The first command creates a folder called **fwupdatedevice**. The second command navigates into the **fwupdatedevice** folder.
-
-1. To create a new console app, enter the following command:
-
-    ```cmd/sh
-    dotnet new console
-    ```
-
-    > **Note**: When the new .NET console app is created, a `dotnet restore` should have been run as a post-creation process. If you do not see messages in the Terminal pane that indicate this has occurred, your app may not have access to required .NET packages. To address this, enter the following command: `dotnet restore`
-
-1. To install the libraries that will be required for your app, enter the following commands:
-
-    ```cmd/sh
-    dotnet add package Microsoft.Azure.Devices.Client
-    dotnet add package Microsoft.Azure.Devices.Shared
-    dotnet add package Newtonsoft.Json
-    ```
-
-    Review the messages in the Terminal pane and make sure that you installed all three libraries.
+1. Open **Visual Studio Code**.
 
 1. On the **File** menu, click **Open Folder**
 
-1. In the **Open Folder** dialog, navigate to the folder location specified in the Terminal pane, click **fwupdatedevice**, and then click **Select Folder**
+1. In the Open Folder dialog, navigate to the lab 16 Starter folder.
 
-    The EXPLORER pane should open in Visual Studio Code and you should see the `Program.cs` and `fwupdatedevice.csproj` files listed.
+    In _Lab 3: Setup the Development Environment_, you cloned the GitHub repository containing lab resources by downloading a ZIP file and extracting the contents locally. The extracted folder structure includes the following folder path:
+
+    * Allfiles
+      * Labs
+          * 16-Automate IoT Device Management with Azure IoT Hub
+            * Starter
+              * FWUpdateDevice
+
+1. Click **FWUpdateDevice**, and then click **Select Folder**.
+
+    You should see the following files listed in the EXPLORER pane of Visual Studio Code:
+
+    * FWUpdateDevice.csproj
+    * Program.cs
+
+1. In the **EXPLORER** pane, click the **FWUpdateDevice.csproj** file to open it, and note the referenced NuGet packages:
+
+    * Microsoft.Azure.Devices.Client -Device SDK for Azure IoT Hub
+    * Microsoft.Azure.Devices.Shared - Common code for Azure IoT Device and Service SDKs
+    * Newtonsoft.Json - Json.NET is a popular high-performance JSON framework for .NET
 
 1. In the **EXPLORER** pane, click **Program.cs**.
 
-1. In the Code Editor pane, delete the contents of the Program.cs file.
+#### Task 2: Review the application code
 
-#### Task 2: Add code to your app
-
-In this task, you will enter the code for simulating a firmware update on the device in response to an IoT Hub generated request.
+In this task, you will review the code for simulating a firmware update on the device in response to an IoT Hub generated request.
 
 1. Ensure that you have the **Program.cs** file open in Visual Studio Code.
 
-    The Code Editor pane should display an empty code file.
+1. Locate the `Global Variables` comment.
 
-1. Copy-and-Paste the following code into the Code Editor pane:
+    In this simple example, a device connection string, the device ID and the current firmware version are tracked.
 
-    ```cs
-    // Copyright (c) Microsoft. All rights reserved.
-    // Licensed under the MIT license. See LICENSE file in the project root for full license information.
+1. In the code editor, locate the following line of code:
 
-    using Microsoft.Azure.Devices.Shared;
-    using Microsoft.Azure.Devices.Client;
-    using System;
-    using System.Threading.Tasks;
-
-    namespace fwupdatedevice
-    {
-        class SimulatedDevice
-        {
-            // The device connection string to authenticate the device with your IoT hub.
-            static string s_deviceConnectionString = "";
-
-            // Device ID variable
-            static string DeviceID="unknown";
-
-            // Firmware version variable
-            static string DeviceFWVersion = "1.0.0";
-
-            // Simple console log function
-            static void LogToConsole(string text)
-            {
-                // we prefix the logs with the device ID
-                Console.WriteLine(DeviceID + ": " + text);
-            }
-
-            // Function to retrieve firmware version from the OS/HW
-            static string GetFirmwareVersion()
-            {
-                // In here you would get the actual firmware version from the hardware. For the simulation purposes we will just send back the FWVersion variable value
-                return DeviceFWVersion;
-            }
-
-            // Function for updating a device twin reported property to report on the current Firmware (update) status
-            // Here are the values expected in the "firmware" update property by the firmware update configuration in IoT Hub
-            //  currentFwVersion: The firmware version currently running on the device.
-            //  pendingFwVersion: The next version to update to, should match what's
-            //                    specified in the desired properties. Blank if there
-            //                    is no pending update (fwUpdateStatus is 'current').
-            //  fwUpdateStatus:   Defines the progress of the update so that it can be
-            //                    categorized from a summary view. One of:
-            //         - current:     There is no pending firmware update. currentFwVersion should
-            //                    match fwVersion from desired properties.
-            //         - downloading: Firmware update image is downloading.
-            //         - verifying:   Verifying image file checksum and any other validations.
-            //         - applying:    Update to the new image file is in progress.
-            //         - rebooting:   Device is rebooting as part of update process.
-            //         - error:       An error occurred during the update process. Additional details
-            //                    should be specified in fwUpdateSubstatus.
-            //         - rolledback:  Update rolled back to the previous version due to an error.
-            //  fwUpdateSubstatus: Any additional detail for the fwUpdateStatus . May include
-            //                     reasons for error or rollback states, or download %.
-            //
-            // reported: {
-            //       firmware: {
-            //         currentFwVersion: '1.0.0',
-            //         pendingFwVersion: '',
-            //         fwUpdateStatus: 'current',
-            //         fwUpdateSubstatus: '',
-            //         lastFwUpdateStartTime: '',
-            //         lastFwUpdateEndTime: ''
-            //   }
-            // }
-
-            static async Task UpdateFWUpdateStatus(DeviceClient client, string currentFwVersion, string pendingFwVersion, string fwUpdateStatus, string fwUpdateSubstatus, string lastFwUpdateStartTime, string lastFwUpdateEndTime)
-            {
-                TwinCollection properties = new TwinCollection();
-                if (currentFwVersion!=null)
-                    properties["currentFwVersion"] = currentFwVersion;
-                if (pendingFwVersion!=null)
-                    properties["pendingFwVersion"] = pendingFwVersion;
-                if (fwUpdateStatus!=null)
-                    properties["fwUpdateStatus"] = fwUpdateStatus;
-                if (fwUpdateSubstatus!=null)
-                    properties["fwUpdateSubstatus"] = fwUpdateSubstatus;
-                if (lastFwUpdateStartTime!=null)
-                    properties["lastFwUpdateStartTime"] = lastFwUpdateStartTime;
-                if (lastFwUpdateEndTime!=null)
-                    properties["lastFwUpdateEndTime"] = lastFwUpdateEndTime;
-
-                TwinCollection reportedProperties = new TwinCollection();
-                reportedProperties["firmware"] = properties;
-
-                await client.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
-            }
-
-            // Execute firmware update on the device
-            static async Task UpdateFirmware(DeviceClient client, string fwVersion, string fwPackageURI, string fwPackageCheckValue)
-            {
-                LogToConsole("A firmware update was requested from version " + GetFirmwareVersion() + " to version " + fwVersion);
-                await UpdateFWUpdateStatus(client, null, fwVersion, null, null, DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"), null);
-
-                // Get new firmware binary. Here you would download the binary or retrieve it from the source as instructed for your device, then double check with a hash the integrity of the binary you downloaded
-                LogToConsole("Downloading new firmware package from " + fwPackageURI);
-                await UpdateFWUpdateStatus(client, null, null, "downloading", "0", null, null);
-                await Task.Delay(2 * 1000);
-                await UpdateFWUpdateStatus(client, null, null, "downloading", "25", null, null);
-                await Task.Delay(2 * 1000);
-                await UpdateFWUpdateStatus(client, null, null, "downloading", "50", null, null);
-                await Task.Delay(2 * 1000);
-                await UpdateFWUpdateStatus(client, null, null, "downloading", "75", null, null);
-                await Task.Delay(2 * 1000);
-                await UpdateFWUpdateStatus(client, null, null, "downloading", "100", null, null);
-                // report the binary has been downloaded
-                LogToConsole("The new firmware package has been successfully downloaded.");
-
-                // Check binary integrity
-                LogToConsole("Verifying firmware package with checksum " + fwPackageCheckValue);
-                await UpdateFWUpdateStatus(client, null, null, "verifying", null, null, null);
-                await Task.Delay(5 * 1000);
-                // report the binary has been downloaded
-                LogToConsole("The new firmware binary package has been successfully verified");
-
-                // Apply new firmware
-                LogToConsole("Applying new firmware");
-                await UpdateFWUpdateStatus(client, null, null, "applying", null, null, null);
-                await Task.Delay(5 * 1000);
-
-                // On a real device you would reboot at the end of the process and the device at boot time would report the actual firmware version, which if successful should be the new version.
-                // For the sake of the simulation, we will simply wait some time and report the new firmware version
-                LogToConsole("Rebooting");
-                await UpdateFWUpdateStatus(client, null, null, "rebooting", null, null, DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"));
-                await Task.Delay(5 * 1000);
-
-                // On a real device you would issue a command to reboot the device. Here we are simply running the init function
-                DeviceFWVersion = fwVersion;
-                await InitDevice(client);
-
-            }
-
-            // Callback for responding to desired property changes
-            static async Task OnDesiredPropertyChanged(TwinCollection desiredProperties, object userContext)
-            {
-                LogToConsole("Desired property changed:");
-                LogToConsole($"{desiredProperties.ToJson()}");
-
-                // Execute firmware update
-                if (desiredProperties.Contains("firmware") && (desiredProperties["firmware"]!=null))
-                {
-                    // In the desired properties, we will find the following information:
-                    // fwVersion: the version number of the new firmware to flash
-                    // fwPackageURI: URI from where to download the new firmware binary
-                    // fwPackageCheckValue: Hash for validating the integrity of the binary downloaded
-                    // We will assume the version of the firmware is a new one
-                    TwinCollection fwProperties = new TwinCollection(desiredProperties["firmware"].ToString());
-                    await UpdateFirmware((DeviceClient)userContext, fwProperties["fwVersion"].ToString(), fwProperties["fwPackageURI"].ToString(), fwProperties["fwPackageCheckValue"].ToString());
-
-                }
-            }
-
-            static async Task InitDevice(DeviceClient client)
-            {
-                LogToConsole("Device booted");
-                LogToConsole("Current firmware version: " + GetFirmwareVersion());
-                await UpdateFWUpdateStatus(client, GetFirmwareVersion(), "", "current", "", "", "");
-            }
-
-            static async Task Main(string[] args)
-            {
-                // Get the device connection string from the command line
-                if (string.IsNullOrEmpty(s_deviceConnectionString) && args.Length > 0)
-                {
-                    s_deviceConnectionString = args[0];
-                } else
-                {
-                    Console.WriteLine("Please enter the connection string as argument.");
-                    return;
-                }
-
-                DeviceClient deviceClient = DeviceClient.CreateFromConnectionString(s_deviceConnectionString, TransportType.Mqtt);
-
-                if (deviceClient == null)
-                {
-                    Console.WriteLine("Failed to create DeviceClient!");
-                    return;
-                }
-
-                // Get the device ID
-                string[] elements = s_deviceConnectionString.Split('=',';');
-
-                for(int i=0;i<elements.Length; i+=2)
-                {
-                    if (elements[i]=="DeviceId") DeviceID = elements[i+1];
-                }
-
-                // Run device init routine
-                await InitDevice(deviceClient);
-
-                // Attach callback for Desired Properties changes
-                await deviceClient.SetDesiredPropertyUpdateCallbackAsync(OnDesiredPropertyChanged, deviceClient).ConfigureAwait(false);
-
-                // Wait for keystroke to end app
-                // TODO
-                while (true)
-                {
-                    Console.ReadLine();
-                    return;
-                }
-            }
-        }
-    }
+    ```csharp
+    private readonly static string deviceConnectionString = "<your device connection string>";
     ```
 
-    > **Note**:
-    > Read through the comments in the code, noting how the device reacts to device twin changes to execute a firmware update based on the configuration shared in the desired Property "firmware". You can also note the function that will report the current firmware update status through the reported properties of the device twin.
+1. Replace the **\<your device connection string\>** with the device connection string that you saved earlier.
 
-1. On the **File** menu, click **Save**.
+    This is the only code change required.
 
-Your device-side code is now complete. Next, you will test that the firmware update process works as expected for this simulated device.
+1. Locate the **Main** method.
+
+    This method is similar to the device simulators used earlier - the **deviceConnectionString** is used to create a **DeviceClient** instance to connect to IoT Hub, etc. and the device twin property changed callback is configured.
+
+    The **InitDevice** method is new and merely simulates the bootup cycle of a device and reports the current firmware by updating the device twin via the **UpdateFWUpdateStatus** method.
+
+    The app then loops, waiting for a device twin update that will trigger a firmware update.
+
+1.Locate the **UpdateFWUpdateStatus** method and review the code:
+
+    This method creates a new **TwinCollection** instance, populates it with the provided values, and then updates the device twin.
+
+1. Locate the **OnDesiredPropertyChanged** method and review the code:
+
+    This method is invoked as the callback when a device twin update is received by the device. If a firmware update is detected, the **UpdateFirmware** method is called. This method simulate the download of the firmware, updating the firmware and then rebooting the device.
 
 ### Exercise 3: Test firmware update on a single device
 
@@ -390,13 +190,13 @@ In this exercise, you will use the Azure portal to create a new device managemen
 
 #### Task 1: Start device simulator
 
-1. If necessary, open your **fwupdatedevice** project in Visual Studio Code.
+1. If necessary, open your **FWUpdateDevice** project in Visual Studio Code.
 
 1. Ensure that you have the Terminal pane open.
 
-    The folder location of the command prompt be the `fwupdatedevice` folder.
+    The folder location of the command prompt be the `FWUpdateDevice` folder.
 
-1. To run the `fwupdatedevice` app, enter the following command:
+1. To run the `FWUpdateDevice` app, enter the following command:
 
     ``` bash
     dotnet run "<device connection string>"
@@ -408,11 +208,11 @@ In this exercise, you will use the Azure portal to create a new device managemen
 
 1. Review the contents of the Terminal pane.
 
-    You should see the following output in the terminal (where "mydevice" is the device ID you used when creating the device identity):
+    You should see the following output in the terminal:
 
     ``` bash
-        mydevice: Device booted
-        mydevice: Current firmware version: 1.0.0
+        sensor-th-0155: Device booted
+        sensor-th-0155: Current firmware version: 1.0.0
     ```
 
 #### Task 2: Create the device management configuration

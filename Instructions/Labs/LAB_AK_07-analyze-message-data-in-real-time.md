@@ -53,7 +53,7 @@ This lab assumes that the following Azure resources are available:
 
 | Resource Type | Resource Name |
 | :-- | :-- |
-| Resource Group | rg-az220 |
+| Resource Group | @lab.CloudResourceGroup(ResourceGroup1).Name |
 | IoT Hub | iot-az220-training-{your-id} |
 | Device ID | sensor-v-3000 |
 
@@ -61,7 +61,7 @@ To ensure these resources are available, complete the following tasks.
 
 1. Select **Deploy to Azure**:
 
-    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2flab07.json)
+    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2fAllfiles%2FARM%2Flab07.json)
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -69,17 +69,17 @@ To ensure these resources are available, complete the following tasks.
 
 1. Under **Project details**, in the **Subscription** dropdown, ensure that the Azure subscription that you intend to use for this course is selected.
 
-1. In the **Resource group** dropdown, select **rg-az220**.
+1. In the **Resource group** dropdown, select **@lab.CloudResourceGroup(ResourceGroup1).Name**.
 
-    > **NOTE**: If **rg-az220** is not listed:
+    > **NOTE**: If **@lab.CloudResourceGroup(ResourceGroup1).Name** is not listed:
     >
     > 1. Under the **Resource group** dropdown, click **Create new**.
-    > 1. Under **Name**, enter **rg-az220**.
+    > 1. Under **Name**, enter **@lab.CloudResourceGroup(ResourceGroup1).Name**.
     > 1. Click **OK**.
 
 1. Under **Instance details**, in the **Region** dropdown, select the region closest to you.
 
-    > **NOTE**: If the **rg-az220** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
+    > **NOTE**: If the **@lab.CloudResourceGroup(ResourceGroup1).Name** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
 
 1. In the **Your ID** field, enter the unique ID you created in Exercise 1.
 
@@ -93,9 +93,12 @@ To ensure these resources are available, complete the following tasks.
 
 1. Once the deployment has completed, in the left navigation area, to review any output values from the template,  click **Outputs**.
 
-1. Copy the **sensor-v-3000** output into a text document, and note that it is for the **sensor-v-3000** device.
+    Make a note of the outputs for use later:
 
-    Once you have saved the connection string to a location where you can find it easily, you will be ready to continue with the lab.
+    * connectionString
+    * deviceConnectionString
+
+The resources have now been created.
 
 ### Exercise 2: Write Code to generate Vibration Telemetry
 
@@ -188,126 +191,7 @@ The simulated device app that you will build in this task simulates an IoT devic
 
 1. On the **File** menu, click **Save**.
 
-1. Take a minute to review the structure of the project.
-
-    Notice that the application structure is similar to that of your previous simulated device projects.
-
-    * Using statements
-    * Namespace definition
-      * Program class - responsible for connecting to Azure IoT and sending telemetry
-      * ConveyorBeltSimulator class - (replaces EnvironmentSensor) rather than just generating telemetry, this class also simulates a running conveyor belt
-      * ConsoleHelper - a new class that encapsulates writing different colored text to the console
-
-1. Take a minute to review the **Main** method.
-
-    ```csharp
-    private static void Main(string[] args)
-    {
-        ConsoleHelper.WriteColorMessage("Vibration sensor device app.\n", ConsoleColor.Yellow);
-
-        // Connect to the IoT hub using the MQTT protocol.
-        deviceClient = DeviceClient.CreateFromConnectionString(deviceConnectionString, TransportType.Mqtt);
-
-        SendDeviceToCloudMessagesAsync();
-        Console.ReadLine();
-    }
-    ```
-
-    Notice how straightforward it is to create an instance of **DeviceClient** using the **deviceConnectionString** variable. Since the `deviceClient` object is declared outside of **Main** (at the Program level in the code above), it is global and therefor available inside the methods that communicate with IoT hub.
-
-1. Take a minute to review the **SendDeviceToCloudMessagesAsync** method.
-
-    ```csharp
-    private static async void SendDeviceToCloudMessagesAsync()
-    {
-        var conveyor = new ConveyorBeltSimulator(intervalInMilliseconds);
-
-        // Simulate the vibration telemetry of a conveyor belt.
-        while (true)
-        {
-            var vibration = conveyor.ReadVibration();
-
-            await CreateTelemetryMessage(conveyor, vibration);
-
-            await CreateLoggingMessage(conveyor, vibration);
-
-            await Task.Delay(intervalInMilliseconds);
-        }
-    }
-    ```
-
-    First off, notice that this method is being used to establish the infinite program loop, first taking a vibration reading and then sending messages at a defined time interval.
-
-    A closer look reveals that the ConveyorBeltSimulator class is used to create a ConveyorBeltSimulator instance named `conveyor`. The `conveyor` object is first used to capture a vibration reading which is placed into a local `vibration` variable, and is then passed to the two create message methods along with the `vibration` value that was captured at the start of the interval.
-
-1. Take a minute to review the **CreateTelemetryMessage** method.
-
-    ```csharp
-    private static async Task CreateTelemetryMessage(ConveyorBeltSimulator conveyor, double vibration)
-    {
-        var telemetryDataPoint = new
-        {
-            vibration = vibration,
-        };
-        var telemetryMessageString = JsonConvert.SerializeObject(telemetryDataPoint);
-        var telemetryMessage = new Message(Encoding.ASCII.GetBytes(telemetryMessageString));
-
-        // Add a custom application property to the message. This is used to route the message.
-        telemetryMessage.Properties.Add("sensorID", "VSTel");
-
-        // Send an alert if the belt has been stopped for more than five seconds.
-        telemetryMessage.Properties.Add("beltAlert", (conveyor.BeltStoppedSeconds > 5) ? "true" : "false");
-
-        Console.WriteLine($"Telemetry data: {telemetryMessageString}");
-
-        // Send the telemetry message.
-        await deviceClient.SendEventAsync(telemetryMessage);
-        ConsoleHelper.WriteGreenMessage($"Telemetry sent {DateTime.Now.ToShortTimeString()}");
-    }
-    ```
-
-    As in earlier labs, this method creates a JSON message string and uses the **Message** class to send the message, along with additional properties. Notice the **sensorID** property - this will be used to route the **VSTel** values appropriately at the IoT Hub. Also notice the **beltAlert** property - this is set to true if the conveyor belt haas stopped for more than 5 seconds.
-
-    As usual, the message is sent via the **SendEventAsync** method of the device client.
-
-1. Take a minute to review the **CreateLoggingMessage** method.
-
-    ```csharp
-    private static async Task CreateLoggingMessage(ConveyorBeltSimulator conveyor, double vibration)
-    {
-        // Create the logging JSON message.
-        var loggingDataPoint = new
-        {
-            vibration = Math.Round(vibration, 2),
-            packages = conveyor.PackageCount,
-            speed = conveyor.BeltSpeed.ToString(),
-            temp = Math.Round(conveyor.Temperature, 2),
-        };
-        var loggingMessageString = JsonConvert.SerializeObject(loggingDataPoint);
-        var loggingMessage = new Message(Encoding.ASCII.GetBytes(loggingMessageString));
-
-        // Add a custom application property to the message. This is used to route the message.
-        loggingMessage.Properties.Add("sensorID", "VSLog");
-
-        // Send an alert if the belt has been stopped for more than five seconds.
-        loggingMessage.Properties.Add("beltAlert", (conveyor.BeltStoppedSeconds > 5) ? "true" : "false");
-
-        Console.WriteLine($"Log data: {loggingMessageString}");
-
-        // Send the logging message.
-        await deviceClient.SendEventAsync(loggingMessage);
-        ConsoleHelper.WriteGreenMessage("Log data sent\n");
-    }
-    ```
-
-    Notice that this method is very similar to the **CreateTelemetryMessage** method. Here are the key items to note:
-
-    * The **loggingDataPoint** contains more information than the telemetry object. It is common to include as much information as possible for logging purposes to assist in any fault diagnosis activities or more detailed analytics in the future.
-    * The logging message includes the **sensorID** property, this time set to **VSLog**. Again, as noted above, his will be used to route the **VSLog** values appropriately at the IoT Hub.
-
-1. Optionally, take a moment to review the **ConveyorBeltSimulator** class and the **ConsoleHelper** class.
-
-    You don't actually need to understand how either of these classes work to achieve the full value of this lab, but they both support the outcome in their own way. The **ConveyorBeltSimulator** class simulates the operation of a conveyor belt, modeling a number of speeds and related states to generate vibration data. The **ConsoleHelper** class is used to write different colored text to the console to highlight different data and values.
+1. Optionally, take a moment to review the code.
 
 #### Task 3: Test your code to send telemetry
 
@@ -555,7 +439,7 @@ This will enable you to verify that your route includes the following settings:
 
 1. Under **Subscription**, choose the subscription you are using for the lab.
 
-1. Under **Resource group**, select **rg-az220**.
+1. Under **Resource group**, select **@lab.CloudResourceGroup(ResourceGroup1).Name**.
 
 1. Under **Location**, select the region that you are using for the labs in this course.
 

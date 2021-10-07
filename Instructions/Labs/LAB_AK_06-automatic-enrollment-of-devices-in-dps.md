@@ -34,7 +34,7 @@ This lab assumes that the following Azure resources are available:
 
 | Resource Type | Resource Name |
 | :-- | :-- |
-| Resource Group | rg-az220 |
+| Resource Group | @lab.CloudResourceGroup(ResourceGroup1).Name |
 | IoT Hub | iot-az220-training-{your-id} |
 | Device Provisioning Service | dps-az220-training-{your-id} |
 
@@ -42,7 +42,7 @@ To ensure these resources are available, complete the following tasks.
 
 1. Select **Deploy to Azure**:
 
-    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2flab06.json)
+    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2fAllfiles%2FARM%2Flab06.json)
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -50,17 +50,17 @@ To ensure these resources are available, complete the following tasks.
 
 1. Under **Project details**, in the **Subscription** dropdown, ensure that the Azure subscription that you intend to use for this course is selected.
 
-1. In the **Resource group** dropdown, select **rg-az220**.
+1. In the **Resource group** dropdown, select **@lab.CloudResourceGroup(ResourceGroup1).Name**.
 
-    > **NOTE**: If **rg-az220** is not listed:
+    > **NOTE**: If **@lab.CloudResourceGroup(ResourceGroup1).Name** is not listed:
     >
     > 1. Under the **Resource group** dropdown, click **Create new**.
-    > 1. Under **Name**, enter **rg-az220**.
+    > 1. Under **Name**, enter **@lab.CloudResourceGroup(ResourceGroup1).Name**.
     > 1. Click **OK**.
 
 1. Under **Instance details**, in the **Region** dropdown, select the region closest to you.
 
-    > **NOTE**: If the **rg-az220** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
+    > **NOTE**: If the **@lab.CloudResourceGroup(ResourceGroup1).Name** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
 
 1. In the **Your ID** field, enter the unique ID you created in Exercise 1.
 
@@ -74,10 +74,12 @@ To ensure these resources are available, complete the following tasks.
 
 1. Once the deployment has completed, in the left navigation area, to review any output values from the template,  click **Outputs**.
 
-    Make a note of any outputs as necessary.
+    Make a note of the outputs for use later:
+
+    * connectionString
+    * dpsScopeId
 
 The resources have now been created.
-
 
 ### Exercise 2: Generate and Configure X.509 CA Certificates using OpenSSL
 
@@ -343,24 +345,12 @@ In this exercise, you will generate a device certificate using the root certific
     mv ~/certificates/certs/new-device.cert.pem ~/certificates/certs/sensor-thl-2000-device.cert.pem
     ```
 
-1. To create four additional device certificates, enter the following commands:
+1. To create an additional device certificate, enter the following commands:
 
     ```sh
     ./certGen.sh create_device_certificate sensor-thl-2001
     mv ~/certificates/certs/new-device.cert.pfx ~/certificates/certs/sensor-thl-2001-device.cert.pfx
     mv ~/certificates/certs/new-device.cert.pem ~/certificates/certs/sensor-thl-2001-device.cert.pem
-
-    ./certGen.sh create_device_certificate sensor-thl-2002
-    mv ~/certificates/certs/new-device.cert.pfx ~/certificates/certs/sensor-thl-2002-device.cert.pfx
-    mv ~/certificates/certs/new-device.cert.pem ~/certificates/certs/sensor-thl-2002-device.cert.pem
-
-    ./certGen.sh create_device_certificate sensor-thl-2003
-    mv ~/certificates/certs/new-device.cert.pfx ~/certificates/certs/sensor-thl-2003-device.cert.pfx
-    mv ~/certificates/certs/new-device.cert.pem ~/certificates/certs/sensor-thl-2003-device.cert.pem
-
-    ./certGen.sh create_device_certificate sensor-thl-2004
-    mv ~/certificates/certs/new-device.cert.pfx ~/certificates/certs/sensor-thl-2004-device.cert.pfx
-    mv ~/certificates/certs/new-device.cert.pem ~/certificates/certs/sensor-thl-2004-device.cert.pem
     ```
 
 1. To download the generated X.509 device certificates from the Cloud Shell to your local machine, enter the following commands:
@@ -368,9 +358,6 @@ In this exercise, you will generate a device certificate using the root certific
     ```sh
     download ~/certificates/certs/sensor-thl-2000-device.cert.pfx
     download ~/certificates/certs/sensor-thl-2001-device.cert.pfx
-    download ~/certificates/certs/sensor-thl-2002-device.cert.pfx
-    download ~/certificates/certs/sensor-thl-2003-device.cert.pfx
-    download ~/certificates/certs/sensor-thl-2004-device.cert.pfx
     ```
 
     In the next task, you will start building the simulated devices that will use the X.509 device certificates to authenticate with the Device Provisioning Service.
@@ -393,9 +380,9 @@ In this task, you will complete the following:
 
 1. Open Windows File Explorer, and then navigate to the folder where the `sensor-thl-2000-device.cert.pfx` certificate file was downloaded.
 
-1. Use File Explorer to create a copy of the 5 device certificate files.
+1. Use File Explorer to create a copy of the 2 device certificate files.
 
-    It will save some time to copy all five certificate files now, but you will only be using the first one, `sensor-thl-2000-device.cert.pfx`, in the code project that you build initially.
+    It will save some time to copy both certificate files now, but you will only be using the first one, `sensor-thl-2000-device.cert.pfx`, in the code project that you build initially.
 
 1. In File Explorer, navigate to the Starter folder for lab 6 (Automatic Enrollment of Devices in DPS).
 
@@ -485,185 +472,6 @@ In this task, you will complete the following:
     >
     > An HSM (Hardware Security Module), is used for secure, hardware-based storage of device secrets, and is the most secure form of secret storage. Both X.509 certificates and SAS tokens can be stored in the HSM. HSMs can be used with all attestation mechanisms the provisioning service supports. HMS will be discussed in more detail later in this course.
 
-#### Task 3: Add the provisioning code
-
-In this task, you will enter code that completes the implementation associated with the Main method, device provisioning, device twin properties.
-
-1. In the code editor pane for the Program.cs file, locate the `// INSERT Main method below here` comment.
-
-1. To implement the Main method, enter the following code:
-
-    ```csharp
-    public static async Task Main(string[] args)
-    {
-        X509Certificate2 certificate = LoadProvisioningCertificate();
-
-        using (var security = new SecurityProviderX509Certificate(certificate))
-        using (var transport = new ProvisioningTransportHandlerAmqp(TransportFallbackType.TcpOnly))
-        {
-            ProvisioningDeviceClient provClient =
-                ProvisioningDeviceClient.Create(GlobalDeviceEndpoint, dpsIdScope, security, transport);
-
-            using (deviceClient = await ProvisionDevice(provClient, security))
-            {
-                await deviceClient.OpenAsync().ConfigureAwait(false);
-
-                // INSERT Setup OnDesiredPropertyChanged Event Handling below here
-
-                // INSERT Load Device Twin Properties below here
-
-                // Start reading and sending device telemetry
-                Console.WriteLine("Start reading and sending device telemetry...");
-                await SendDeviceToCloudMessagesAsync();
-
-                await deviceClient.CloseAsync().ConfigureAwait(false);
-            }
-        }
-    }
-    ```
-
-    This Main method is very similar to that used in the earlier lab. The two significant changes are the need to load the X.509 certificate and then the change to using **SecurityProviderX509Certificate** as the security provider. The remaining code is identical - you should note that the device twin property change code is also present.
-
-1. Locate the `// INSERT LoadProvisioningCertificate method below here` comment.
-
-1. To implement the LoadProvisioningCertificate method, insert the following code:
-
-    ```csharp
-    private static X509Certificate2 LoadProvisioningCertificate()
-    {
-        var certificateCollection = new X509Certificate2Collection();
-        certificateCollection.Import(certificateFileName, certificatePassword, X509KeyStorageFlags.UserKeySet);
-
-        X509Certificate2 certificate = null;
-
-        foreach (X509Certificate2 element in certificateCollection)
-        {
-            Console.WriteLine($"Found certificate: {element?.Thumbprint} {element?.Subject}; PrivateKey: {element?.HasPrivateKey}");
-            if (certificate == null && element.HasPrivateKey)
-            {
-                certificate = element;
-            }
-            else
-            {
-                element.Dispose();
-            }
-        }
-
-        if (certificate == null)
-        {
-            throw new FileNotFoundException($"{certificateFileName} did not contain any certificate with a private key.");
-        }
-
-        Console.WriteLine($"Using certificate {certificate.Thumbprint} {certificate.Subject}");
-        return certificate;
-    }
-    ```
-
-    As you might expect from the name, the purpose of this method is to load the X.509 certificate from disk. Should the load succeed, the method returns an instance of the **X509Certificate2** class.
-
-    > **Information**: You may be curious as to why the result is an **X509Certificate2** type rather than an **X509Certificate**. The **X509Certificate** is an earlier implementation and is limited in its functionality. The **X509Certificate2** is a subclass of **X509Certificate** with additional functionality that supports both V2 and V3 of the X509 standard.
-
-    The method creates an instance of the **X509Certificate2Collection** class and then attempts to import the certificate file from disk, using the the hard-coded password. The **X509KeyStorageFlags.UserKeySet** values specifies that private keys are stored in the current user store rather than the local computer store. This occurs even if the certificate specifies that the keys should go in the local computer store.
-
-    Next, the method iterates through the imported certificates (in this case, there should only be one) and verifies that the certificate has a private key. Should the imported certificate not match this criteria, an exception is thrown, otherwise the method returns the imported certificate.
-
-1. Locate the `// INSERT ProvisionDevice method below here` comment.
-
-1. To implement the ProvisionDevice method, enter the following code:
-
-    ```csharp
-    private static async Task<DeviceClient> ProvisionDevice(ProvisioningDeviceClient provisioningDeviceClient, SecurityProviderX509Certificate security)
-    {
-        var result = await provisioningDeviceClient.RegisterAsync().ConfigureAwait(false);
-        Console.WriteLine($"ProvisioningClient AssignedHub: {result.AssignedHub}; DeviceID: {result.DeviceId}");
-        if (result.Status != ProvisioningRegistrationStatusType.Assigned)
-        {
-            throw new Exception($"DeviceRegistrationResult.Status is NOT 'Assigned'");
-        }
-
-        var auth = new DeviceAuthenticationWithX509Certificate(
-            result.DeviceId,
-            security.GetAuthenticationCertificate());
-
-        return DeviceClient.Create(result.AssignedHub, auth, TransportType.Amqp);
-    }
-    ```
-
-    This version of **ProvisionDevice** is very similar to that you used in an earlier lab. The primary change is that the **security** parameter is now of type **SecurityProviderX509Certificate**. This means that the **auth** variable used to create a **DeviceClient** must now be of type **DeviceAuthenticationWithX509Certificate** and uses the `security.GetAuthenticationCertificate()` value. The actual device registration is the same as before.
-
-#### Task 4: Add the Device Twin Integration Code
-
-To use the device twin properties (from Azure IoT Hub) on a device, you need to create the code that accesses and applies the device twin properties. In this case, you wish to update the simulated device code to read a device twin Desired Property, and then assign that value to the **telemetryDelay** variable. You also want to update the device twin Reported Property to indicate the delay value that is currently implemented on the device.
-
-1. In the Visual Studio Code editor, locate the **Main** method.
-
-1. Take a moment to review the code, and then locate the `// INSERT Setup OnDesiredPropertyChanged Event Handling below here` comment.
-
-    To begin the integration of device twin properties, you need code that enables the simulated device to be notified when a device twin property is updated.
-
-    To achieve this, you can use the **DeviceClient.SetDesiredPropertyUpdateCallbackAsync** method, and set up an event handler by creating an **OnDesiredPropertyChanged** method.
-
-1. To set up the DeviceClient for an OnDesiredPropertyChanged event, enter the following code:
-
-    ```csharp
-    await deviceClient.SetDesiredPropertyUpdateCallbackAsync(OnDesiredPropertyChanged, null).ConfigureAwait(false);
-    ```
-
-    The **SetDesiredPropertyUpdateCallbackAsync** method is used to set up the **DesiredPropertyUpdateCallback** event handler to receive device twin desired property changes. This code configures **deviceClient** to call a method named **OnDesiredPropertyChanged** when a device twin property change event is received.
-
-    Now that the **SetDesiredPropertyUpdateCallbackAsync** method is in place to set up the event handler, you need to create the **OnDesiredPropertyChanged** method that it calls.
-
-1. Locate the `// INSERT OnDesiredPropertyChanged method below here` comment.
-
-1. To complete the setup of the event handler, enter the following code:
-
-    ```csharp
-    private static async Task OnDesiredPropertyChanged(TwinCollection desiredProperties, object userContext)
-    {
-        Console.WriteLine("Desired Twin Property Changed:");
-        Console.WriteLine($"{desiredProperties.ToJson()}");
-
-        // Read the desired Twin Properties
-        if (desiredProperties.Contains("telemetryDelay"))
-        {
-            string desiredTelemetryDelay = desiredProperties["telemetryDelay"];
-            if (desiredTelemetryDelay != null)
-            {
-                telemetryDelay = int.Parse(desiredTelemetryDelay);
-            }
-            // if desired telemetryDelay is null or unspecified, don't change it
-        }
-
-        // Report Twin Properties
-        var reportedProperties = new TwinCollection();
-        reportedProperties["telemetryDelay"] = telemetryDelay.ToString();
-        await deviceClient.UpdateReportedPropertiesAsync(reportedProperties).ConfigureAwait(false);
-        Console.WriteLine("Reported Twin Properties:");
-        Console.WriteLine($"{reportedProperties.ToJson()}");
-    }
-    ```
-
-    Notice that the **OnDesiredPropertyChanged** event handler accepts a **desiredProperties** parameter of type **TwinCollection**.
-
-    Notice that if the value of the **desiredProperties** parameter contains **telemetryDelay** (a device twin desired property), the code will assign the value of the device twin property to the **telemetryDelay** variable. You may recall that the **SendDeviceToCloudMessagesAsync** method include a **Task.Delay** call that uses the **telemetryDelay** variable to set the delay time between messages sent to IoT hub.
-
-    Notice the next block of code is used to report the current state of the device back up to Azure IoT Hub. This code calls the **DeviceClient.UpdateReportedPropertiesAsync** method and passes it a **TwinCollection** that contains the current state of the device properties. This is how the device reports back to IoT Hub that it received the device twin desired properties changed event, and has now updated its configuration accordingly. Note that it reports what the properties are now set to, not an echo of the desired properties. In the case where the reported properties sent from the device are different than the desired state that the device received, IoT Hub will maintain an accurate Device Twin that reflects the state of the device.
-
-    Now that the device can receive updates to the device twin desired properties from Azure IoT Hub, it also needs to be coded to configure its initial setup when the device starts up. To do this the device will need to load the current device twin desired properties from Azure IoT Hub, and configure itself accordingly.
-
-1. In the **Main** method, locate the `// INSERT Load Device Twin Properties below here` comment.
-
-1. To read the device twin desired properties and configure the device to match on device startup, enter the following code:
-
-    ```csharp
-    var twin = await deviceClient.GetTwinAsync().ConfigureAwait(false);
-    await OnDesiredPropertyChanged(twin.Properties.Desired, null);
-    ```
-
-    This code calls the **DeviceTwin.GetTwinAsync** method to retrieve the device twin for the simulated device. It then accesses the **Properties.Desired** property object to retrieve the current Desired State for the device, and passes that to the **OnDesiredPropertyChanged** method that will configure the simulated devices **telemetryDelay** variable.
-
-    Notice, this code reuses the **OnDesiredPropertyChanged** method that was already created for handling _OnDesiredPropertyChanged_ events. This helps keep the code that reads the device twin desired state properties and configures the device at startup in a single place. The resulting code is simpler and easier to maintain.
-
 1. On the Visual Studio Code **File** menu, click **Save**.
 
     Your simulated device will now use the device twin properties from Azure IoT Hub to set the delay between telemetry messages.
@@ -701,12 +509,6 @@ In this exercise, you will make copies of your simulated device project, and the
 
 1. Right-click **ContainerDevice - Copy**, click **Rename**, and then type **ContainerDevice2001**
 
-1. Repeat steps 3-5 to create folders with the following names:
-
-    * **ContainerDevice2002**
-    * **ContainerDevice2003**
-    * **ContainerDevice2004**
-
 #### Task 2: Update the certificate file references in your code project
 
 1. If necessary, open Visual Studio Code.
@@ -740,16 +542,6 @@ In this exercise, you will make copies of your simulated device project, and the
     ```
 
 1. On the **File** menu, click **Save All**.
-
-1. Repeat steps 3-9 above to update **Program.cs** and **ContainerDevice.csproj** files for each of the remaining code projects as follows:
-
-    | Project Folder | Certificate Name |
-    |----------------|------------------------------|
-    | ContainerDevice2002 | sensor-thl-2002-device.cert.pfx |
-    | ContainerDevice2003 | sensor-thl-2003-device.cert.pfx |
-    | ContainerDevice2004 | sensor-thl-2004-device.cert.pfx |
-
-    **Note**: Be sure to **Save All** each time before continuing to the next folder.
 
 ### Exercise 5: Test the Simulated Device
 
@@ -840,7 +632,7 @@ In this exercise, you will run the simulated device. When the device is started 
 
 1. Leave the simulated device running.
 
-#### Task 2: Start the other simulated devices
+#### Task 2: Start the other simulated device
 
 1. Open a new instance of Visual Studio Code.
 
@@ -867,14 +659,6 @@ In this exercise, you will run the simulated device. When the device is started 
     ```cmd/sh
     dotnet run
     ```
-
-1. Repeat steps 1-7 above to open and start the other simulated device projects as follows:
-
-    | Project Folder |
-    |----------------|
-    | ContainerDevice2002 |
-    | ContainerDevice2003 |
-    | ContainerDevice2004 |
 
 #### Task 3: Change the device configuration through its twin
 
@@ -983,7 +767,7 @@ In this exercise, you will deprovision a single device from an enrollment group.
 
 #### Task 1: Create a disabled individual enrollment for the device.
 
-In this task, you will use the **sensor-thl-2004** device for the individual enrollment.
+In this task, you will use the **sensor-thl-2001** device for the individual enrollment.
 
 1. If necessary, log in to your Azure portal using your Azure account credentials.
 
@@ -1006,7 +790,7 @@ In this task, you will use the **sensor-thl-2004** device for the individual enr
 1. To download the .pem device certificates from the Cloud Shell to your local machine, enter the following commands:
 
     ```sh
-    download ~/certificates/certs/sensor-thl-2004-device.cert.pem
+    download ~/certificates/certs/sensor-thl-2001-device.cert.pem
     ```
 
 1. Switch to your Azure Dashboard.
@@ -1023,9 +807,9 @@ In this task, you will use the **sensor-thl-2004** device for the individual enr
 
 1. In the **Open** dialog, navigate to the downloads folder.
 
-1. In the downloads folder, click **sensor-thl-2004-device.cert.pem**, and then click **Open**.
+1. In the downloads folder, click **sensor-thl-2001-device.cert.pem**, and then click **Open**.
 
-1. On the **Add Enrollment** blade, under **IoT Hub Device ID**, enter **sensor-thl-2004**
+1. On the **Add Enrollment** blade, under **IoT Hub Device ID**, enter **sensor-thl-2001**
 
 1. Under **Enable entry**, click **Disable**.
 
@@ -1039,9 +823,9 @@ In this task, you will use the **sensor-thl-2004** device for the individual enr
 
 1. On the left-side mnu of your IoT hub blade, under **Explorers**, click **IoT devices**.
 
-1. On the **IoT devices** pane, under **DEVICE ID**, locate the **sensor-thl-2004** device.
+1. On the **IoT devices** pane, under **DEVICE ID**, locate the **sensor-thl-2001** device.
 
-1. To the loft of **sensor-thl-2004**, click the checkbox.
+1. To the loft of **sensor-thl-2001**, click the checkbox.
 
 1. At the top of the **IoT devices** pane, click **Delete**, and then click **Yes**.
 
@@ -1053,7 +837,7 @@ In this task, you will use the **sensor-thl-2004** device for the individual enr
 
 1. On the **View** menu, click **Terminal**.
 
-1. Ensure that the command prompt is locate at the **ContainerDevice2004** folder location.
+1. Ensure that the command prompt is located at the **ContainerDevice2001** folder location.
 
 1. To begin running the simulated device app, enter the following command:
 
@@ -1068,8 +852,8 @@ In this task, you will use the **sensor-thl-2004** device for the individual enr
     When the application attempts to use the configured X.509 certificate to connect to DPS, DPS reports DeviceRegistrationResult.Status is NOT 'Assigned'.
 
     ```txt
-    Found certificate: 13F32448E03F451E897B681758BAC593A60BFBFA CN=sensor-thl-2004; PrivateKey: True
-    Using certificate 13F32448E03F451E897B681758BAC593A60BFBFA CN=sensor-thl-2004
+    Found certificate: 13F32448E03F451E897B681758BAC593A60BFBFA CN=sensor-thl-2001; PrivateKey: True
+    Using certificate 13F32448E03F451E897B681758BAC593A60BFBFA CN=sensor-thl-2001
     ProvisioningClient AssignedHub: ; DeviceID:
     Unhandled exception. System.Exception: DeviceRegistrationResult.Status is NOT 'Assigned'
     at ContainerDevice.Program.ProvisionDevice(ProvisioningDeviceClient provisioningDeviceClient, SecurityProviderX509Certificate security) in C:\Users\howdc\Allfiles\Labs\06-Automatic Enrollment of Devices
@@ -1135,11 +919,7 @@ Once the enrollment group has been removed from the Device Provisioning Service 
 
 1. When prompted with "_Are you certain you wish to delete selected device(s)_", click **Yes**.
 
-1. Repeat the steps 4-5 above to remove the following devices:
-
-    * sensor-thl-2001
-    * sensor-thl-2002
-    * sensor-thl-2003
+1. Repeat the steps 4-5 above to remove the sensor-thl-2001 device.
 
 #### Task 3: Confirm that your devices have been deprovisioned
 
@@ -1151,7 +931,7 @@ With the group enrollment deleted from the Device Provisioning Service, and the 
 
 1. On the Visual Studio Code **View** menu, click **Terminal**.
 
-1. Ensure that the command prompt is locate at the **ContainerDevice** folder location.
+1. Ensure that the command prompt is located at the **ContainerDevice** folder location.
 
 1. To begin running the simulated device app, enter the following command:
 

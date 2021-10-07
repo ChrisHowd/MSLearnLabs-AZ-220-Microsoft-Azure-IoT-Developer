@@ -35,14 +35,14 @@ This lab assumes the following Azure resources are available:
 
 | Resource Type  | Resource Name          |
 |----------------|------------------------|
-| Resource Group | rg-az220              |
+| Resource Group | @lab.CloudResourceGroup(ResourceGroup1).Name              |
 | IoT Hub        | iot-az220-training-{your-id} |
 
 To ensure these resources are available, complete the following tasks.
 
 1. Select **Deploy to Azure**:
 
-    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2flab09.json)
+    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2fAllfiles%2FARM%2Flab09.json)
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -50,17 +50,17 @@ To ensure these resources are available, complete the following tasks.
 
 1. Under **Project details**, in the **Subscription** dropdown, ensure that the Azure subscription that you intend to use for this course is selected.
 
-1. In the **Resource group** dropdown, select **rg-az220**.
+1. In the **Resource group** dropdown, select **@lab.CloudResourceGroup(ResourceGroup1).Name**.
 
-    > **NOTE**: If **rg-az220** is not listed:
+    > **NOTE**: If **@lab.CloudResourceGroup(ResourceGroup1).Name** is not listed:
     >
     > 1. Under the **Resource group** dropdown, click **Create new**.
-    > 1. Under **Name**, enter **rg-az220**.
+    > 1. Under **Name**, enter **@lab.CloudResourceGroup(ResourceGroup1).Name**.
     > 1. Click **OK**.
 
 1. Under **Instance details**, in the **Region** dropdown, select the region closest to you.
 
-    > **NOTE**: If the **rg-az220** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
+    > **NOTE**: If the **@lab.CloudResourceGroup(ResourceGroup1).Name** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
 
 1. In the **Your ID** field, enter the unique ID you created in Exercise 1.
 
@@ -96,7 +96,6 @@ az provider register --namespace microsoft.eventgrid
 Registering is still on-going. You can monitor using 'az provider show -n microsoft.eventgrid'
 ```
 
-
 ### Exercise 2: Create HTTP Web Hook Logic App that sends an email
 
 Azure Logic Apps is a cloud service that helps you schedule, automate, and orchestrate tasks, business processes, and workflows when you need to integrate apps, data, systems, and services across enterprises or organizations.
@@ -113,23 +112,25 @@ In this exercise, you will create a new Azure Logic App that will be triggered v
 
 1. On the **Create a resource** blade, in the **Search services and marketplace** box, enter **logic app**
 
-1. In the search results, click **Logic App (Consumption)**.
+1. In the search results, click **Logic App**.
 
-1. On the **Logic App (Consumption)** blade, click **Create**.
+1. On the **Logic App** blade, click **Create**.
 
 1. On the **Basics** tab, under **Project details**, select the **Subscription** that you are using for this course.
 
-1. In the **Resource group** dropdown, under **Select existing**, click **rg-az220**.
+1. In the **Resource group** dropdown, under **Select existing**, click **@lab.CloudResourceGroup(ResourceGroup1).Name**.
 
-1. Under **Instance details**, in the **Name** field, enter **logic-az220-training-{your-id}**
+1. Under **Instance details**, under **Type** select **Consumption**.
+
+1. In the **Name** field, enter **logic-az220-training-{your-id}**
 
     For example: **logic-az220-training-cp191218**
 
     The name of your Azure Logic App must be globally unique because it is a publicly accessible resource that you must be able to access from any IP connected device.
 
-1. In the **Location** dropdown, select the same Azure region that was used for the resource group.
+1. In the **Region** dropdown, select the same Azure region that was used for the resource group.
 
-1. Leave **Log Analytics** set to **Off**.
+1. Leave **Enable Log Analytics** set to **No**.
 
 1. Click **Review + create**.
 

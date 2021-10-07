@@ -43,7 +43,7 @@ This lab assumes the following Azure resources are available:
 
 | Resource Type | Resource Name |
 | :-- | :-- |
-| Resource Group | `rg-az220` |
+| Resource Group | `@lab.CloudResourceGroup(ResourceGroup1).Name` |
 | IoT Hub | `iot-az220-training-{your-id}` |
 | Device ID | `sensor-th-truck0001` |
 | Device ID | `sensor-th-airplane0001` |
@@ -53,7 +53,7 @@ To ensure these resources are available, complete the following tasks.
 
 1. Select **Deploy to Azure**:
 
-    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2flab10.json)
+    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2fARM%2fAllfiles%2FARM%2Flab10.json)
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -61,17 +61,17 @@ To ensure these resources are available, complete the following tasks.
 
 1. Under **Project details**, in the **Subscription** dropdown, ensure that the Azure subscription that you intend to use for this course is selected.
 
-1. In the **Resource group** dropdown, select **rg-az220**.
+1. In the **Resource group** dropdown, select **@lab.CloudResourceGroup(ResourceGroup1).Name**.
 
-    > **NOTE**: If **rg-az220** is not listed:
+    > **NOTE**: If **@lab.CloudResourceGroup(ResourceGroup1).Name** is not listed:
     >
     > 1. Under the **Resource group** dropdown, click **Create new**.
-    > 1. Under **Name**, enter **rg-az220**.
+    > 1. Under **Name**, enter **@lab.CloudResourceGroup(ResourceGroup1).Name**.
     > 1. Click **OK**.
 
 1. Under **Instance details**, in the **Region** dropdown, select the region closest to you.
 
-    > **NOTE**: If the **rg-az220** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
+    > **NOTE**: If the **@lab.CloudResourceGroup(ResourceGroup1).Name** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
 
 1. In the **Your ID** field, enter the unique ID you created in Exercise 1.
 
@@ -110,6 +110,7 @@ To ensure these resources are available, complete the following tasks.
     ```
 
 The resources have now been created.
+
 ### Exercise 2: Setup Time Series Insights
 
 Azure Time Series Insights (TSI) is an end-to-end platform-as-a-service offering used to collect, process, store, analyze, and query data from IoT solutions at scale. TSI is designed for ad hoc data exploration and operational analysis of data that's highly contextualized and optimized for time series.
@@ -132,7 +133,7 @@ In this exercise, you will setup Time Series Insights integration with Azure IoT
 
 1. In the **Subscription** dropdown, select the subscription that you are using for this course.
 
-1. In the **Resource group** dropdown, click **rg-az220**.
+1. In the **Resource group** dropdown, click **@lab.CloudResourceGroup(ResourceGroup1).Name**.
 
 1. In the **Location** dropdown, select the Azure region used by your resource group.
 
@@ -142,13 +143,9 @@ In this exercise, you will setup Time Series Insights integration with Azure IoT
 
 1. Under the **EVENT SOURCE DETAILS** section, ensure that **Create an event source?** is set to **Yes**.
 
-1. In the **Name** field, enter **iot-az220-training-{your-id}** to specify a unique name for this Event Source.
-
 1. In the **Source type** dropdown, ensure that **IoT Hub** is selected.
 
-1. In the **Select a hub** dropdown, ensure that **Select existing** is selected.
-
-    This will allow you to select an existing IoT Hub that's already been provisioned.
+1. In the **Name** field, enter **iot-az220-training-{your-id}** to specify a unique name for this Event Source.
 
 1. In the **Subscription** dropdown, select the subscription that you are using for this course.
 
@@ -163,6 +160,8 @@ In this exercise, you will setup Time Series Insights integration with Azure IoT
 1. In the **IoT Hub consumer group** box, enter **tsievents** and then click **Add**.
 
     This will add a new _Consumer Group_ to use for this Event Source. The Consumer Group needs to be used exclusively for this Event Source, as there can only be a single active reader from a given Consumer Group at a time.
+
+1. Under the **Start options** section, in the **STart time** dropdown, select **Beginning now (default)**.
 
 1. Under the **TIMESTAMP** section, leave the **Property Name** blank.
 
