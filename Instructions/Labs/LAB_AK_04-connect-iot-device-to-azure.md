@@ -57,7 +57,7 @@ To ensure these resources are available, complete the following tasks.
 
 1. Under **Instance details**, in the **Region** dropdown, select the region closest to you.
 
-    > **NOTE**: If the **@lab.CloudResourceGroup(ResourceGroup1).Name** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
+    > **NOTE**: As the **@lab.CloudResourceGroup(ResourceGroup1).Name** group already exists, the **Region** field is set to the region used by the resource group and is read-only.
 
 1. In the **Your ID** field, enter the unique ID you created in Exercise 1.
 
@@ -95,7 +95,7 @@ In this exercise, you will open your IoT Hub in the Azure portal, add a new IoT 
 
 1. On the left-side menu of your IoT Hub blade, under **Explorers**, click **IoT devices**.
 
-1. At the top of the **IoT devices** pane, click **+ New**.
+1. At the top of the **IoT devices** pane, click **Add Device**.
 
 1. In the **Device ID** field, enter **sensor-th-0001**
 
@@ -109,11 +109,9 @@ In this exercise, you will open your IoT Hub in the Azure portal, add a new IoT 
 
     Notice that there are three types of authentication available. In this lab you will leverage the simplest of the three, Symmetric key. X.509 Certificates and their use for authentication will be covered in later labs.
 
-1. Notice that the **Primary key** and **Secondary key** fields are disabled.
-
 1. Under **Auto-generate keys**, ensure the checkbox is selected.
 
-    With **Auto-generate keys** selected, the **Primary key** and **Secondary key** fields are disabled and will be populated once the record is saved. Un-selecting **Auto-generate keys** will enable those fields, allowing for values to be entered directly.
+    With **Auto-generate keys** selected, the **Primary key** and **Secondary key** fields are hidden and will be populated once the record is saved. Un-selecting **Auto-generate keys** will display those fields, allowing for values to be entered directly.
 
 1. Under **Connect this device to an IoT hub**, ensure that **Enable** is selected.
 
@@ -335,11 +333,12 @@ In this task, you will use Visual Studio Code to enter the code that leverages t
     > **Important**: If you are intending to paste the code into a learning environment such as LODS, there are a few things to be aware of:
     >
     > * The **Type text -> Type clipboard text** buffer is limited, so it may truncate the code that is copied - double check your work and add any missing characters.
-    > * As the **Type clipboard text** simulates typing, the default settings in Visual Studio Code will automatically indent code and insert closing braces - `)`, `}` and `]` - resulting in duplicate characters and incorrect indentation. These actions can be turned off with the following settings:
-    >    * **Editor: Auto Closing Brackets**
-    >    * **Editor: Auto Indent**
+    > * As the **Type clipboard text** simulates typing, the default settings in Visual Studio Code will automatically indent code and insert closing braces - `)`, `}` and `]` - resulting in duplicate characters and incorrect indentation. These actions can be turned off in Visual Studio code settings (**File -> Preferences -> Settings**) with the following settings:
+    >    * **Editor: Auto Closing Brackets** - set to **never**
+    >    * **Editor: Auto Indent** - set to **none**
     > * The source can be reformatted at any time by using **F1** and entering **Format Document** or by pressing **SHIFT + ALT + F**
 
+<nbsp/>
 
     ```csharp
     // INSERT using statements below here
