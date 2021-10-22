@@ -122,6 +122,8 @@ In this exercise, use Azure CLI to create an Ubuntu Server VM with Azure IoT Edg
 
     Ensure that the environment is set to **Bash** in the shell.
 
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
+
 1. If you need to create the **@lab.CloudResourceGroup(ResourceGroup1).Namevm** resource group, follow these instructions:
 
     To create a resource group for the Azure IoT Edge enabled VM, enter the following command:

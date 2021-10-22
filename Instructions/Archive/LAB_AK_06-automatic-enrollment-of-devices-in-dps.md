@@ -95,6 +95,8 @@ In this exercise, you will generate an X.509 CA Certificate using OpenSSL within
 
     A Cloud Shell window will open near the bottom of the display screen.
 
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
+
 1. In the upper left corner of the Cloud Shell window, ensure that **Bash** is selected as the environment option.
 
     > **Note**:  Both *Bash* and *PowerShell* interfaces for the Azure Cloud Shell support the use of **OpenSSL**. In this Exercise you will be using some helper scripts written for the *Bash* shell.

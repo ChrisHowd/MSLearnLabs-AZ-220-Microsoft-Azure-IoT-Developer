@@ -226,17 +226,32 @@ The Visual Studio Code and Azure CLI tools both support an Azure IoT extension t
     az extension add --name timeseriesinsights
     ```
 
-#### Task 3: Install Azure CLI Extension - cloud environment
+
+#### Task 3: Configure cloud shell storage
 
 Many of the labs will require the use of the Azure CLI IoT extensions via the Azure Cloud Shell. The following steps ensure the extension is installed and running the latest version.
 
 1. Using a browser, open the [Azure Cloud Shell](https://shell.azure.com/) and login with the Azure subscription you are using for this course.
 
-1. If you are prompted about setting up storage for Cloud Shell, accept the defaults.
+1. When the **Welcome to Azure Cloud Shell** message is displayed, select **Bash**.
 
-1. Verify that the Cloud Shell is using **Bash**.
+1. Under **Subscription**, ensure the correct subscription is displayed.
 
-    The dropdown in the top-left corner of the Azure Cloud Shell page is used to select the environment. Verify that the selected dropdown value is **Bash**.
+1. To specify storage options, click **Show advanced settings**.
+
+1. Under **Resource group**, ensure **Use existing** is selected and the **@lab.CloudResourceGroup(ResourceGroup1).Name** is shown.
+
+1. Under **Storage account**, select **Create new** and enter the following: **stoaz220{your-id}**.
+
+1. Under **File share**, select **Create new** and enter the following **cloudshell**.
+
+1. To finish to configuration of the cloud shell, click **Create storage**.
+
+    The resources will be created in azure and, after a few moments, the cloud shell will open.
+
+#### Task 4: Install Azure CLI Extension - cloud environment
+
+1. Ensure the Cloud Shell is open.
 
 1. At the command prompt, to install the Azure CLI extension for IoT, enter the following command:
 
@@ -256,7 +271,7 @@ Many of the labs will require the use of the Azure CLI IoT extensions via the Az
     az extension add --name timeseriesinsights
     ```
 
-#### Task 4: Verify Development Environment Setup
+#### Task 5: Verify Development Environment Setup
 
 You should verify that the development environment has been set up successfully. Once this is complete, you will be ready to start building your IoT solutions.
 

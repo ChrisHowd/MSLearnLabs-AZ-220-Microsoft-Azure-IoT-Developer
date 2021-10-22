@@ -494,6 +494,8 @@ In this exercise, you will build and run a custom IoT Edge Module solution using
 
 1. With the IoT Edge Simulator still running, open the Azure portal, and then open the Cloud Shell.
 
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
+
 1. At the Cloud Shell command prompt, to monitor the messages being sent to Azure IoT Hub from the `SimulatedDevice` running in the IoT Edge Simulator on your local machine, enter the following command:
 
     ```cmd/sh

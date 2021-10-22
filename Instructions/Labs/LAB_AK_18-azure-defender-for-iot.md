@@ -356,6 +356,8 @@ In this exercise, you will be adding a security agent for C# that you will deplo
 
 1. On the Azure portal toolbar, click **Cloud Shell**.
 
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
+
     Ensure that the **Bash** environment is selected within the Cloud Shell.
 
 1. At the Cloud Shell command prompt, enter the `ssh` command that you created above, and then press **Enter**.

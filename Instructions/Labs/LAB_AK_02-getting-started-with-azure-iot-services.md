@@ -129,6 +129,8 @@ In this exercise, you will use the Azure portal to create and configure your IoT
 
     You will be adding resources to your dashboard as the course continues.
 
+    > **Note**: If the AZ-220 Dashboard does not exist, create it as detailed in **LAB 01 - Getting Started, Exercise 2 - Create an Azure Dashboard and add a Resource Group**.
+
 1. On the Azure portal menu, click **+ Create a resource**.
 
     The **New** blade that opens is a front-end to the Azure Marketplace, which is a collection of all the resources you can create in Azure. The marketplace contains resources from both Microsoft and the community.

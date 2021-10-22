@@ -90,6 +90,8 @@ To ensure these resources are available, complete the following tasks.
     az ad signed-in-user show --query objectId -o tsv
     ```
 
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
+
     Copy the displayed object ID.
 
 1. In the **Object ID** field, enter the object ID copied from the above step.

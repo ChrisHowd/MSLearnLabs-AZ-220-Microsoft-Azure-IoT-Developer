@@ -45,7 +45,7 @@ To ensure these resources are available, complete the following tasks.
 
 1. To create the required resources, open a new browser tab and enter the following address:
 
-    (Lab 4 ARM Script URL)[https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab04.json]
+    [https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab04.json](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab04.json)
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -90,6 +90,8 @@ In this exercise, you will open your IoT Hub in the Azure portal, add a new IoT 
     If you have more than one Azure account, be sure that you are logged in with the account that is tied to the subscription that you will be using for this course.
 
 1. Verify that your AZ-220 dashboard is being displayed.
+
+    > **Note**: If the AZ-220 Dashboard does not exist, create it as detailed in **LAB 01 - Getting Started, Exercise 2 - Create an Azure Dashboard and add a Resource Group**.
 
 1. On the **@lab.CloudResourceGroup(ResourceGroup1).Name** resource group tile, click **iot-az220-training-{your-id}**
 
@@ -640,6 +642,8 @@ In this task, you will use Visual Studio Code to enter the code that leverages t
 In this task, you will use the Azure CLI to verify telemetry sent by the simulated device is being received by Azure IoT Hub.
 
 1. Using a browser, open the [Azure Cloud Shell](https://shell.azure.com/) and login with the Azure subscription you are using for this course.
+
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
 
 1. In the Azure Cloud Shell, to monitor the event messages that are being received by your IoT hub, enter the following command:
 

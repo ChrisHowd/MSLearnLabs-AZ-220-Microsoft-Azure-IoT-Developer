@@ -152,6 +152,8 @@ In this exercise, you will create a new IoT Edge Device Identity within Azure Io
 
     On the Azure portal toolbar, not the left side navigation menu, the Cloud Shell button has an icon that looks similar ot a command prompt.
 
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
+
 1. Ensure that you are using the **Bash** environment option.
 
     In the upper left corner of the Cloud Shell, Bash should be selected in the environment dropdown.

@@ -454,6 +454,8 @@ In the following steps you will verify that OpenSSL tools installed in an earlie
 
 1. In your browser, navigate to the [Azure Cloud Shell](https://shell.azure.com/) and login to your subscription.
 
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
+
 1. At the shell prompt, enter the following command:
 
     ```bash

@@ -500,6 +500,8 @@ In this exercise, you will build and run a custom IoT Edge Module solution using
     az iot hub monitor-events --hub-name "iot-az220-training-{your-id}"
     ```
 
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
+
     Be sure to replace the `iot-az220-training-{your-id}` value in the above command with the name of your Azure IoT Hub service.
 
 1. Observe the output displayed in the Cloud Shell.

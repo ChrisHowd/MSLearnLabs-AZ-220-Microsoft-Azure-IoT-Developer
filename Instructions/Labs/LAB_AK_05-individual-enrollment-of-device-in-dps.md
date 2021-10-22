@@ -44,9 +44,9 @@ This lab assumes that the following Azure resources are available:
 
 To ensure these resources are available, complete the following tasks.
 
-1. Select **Deploy to Azure**:
+1. To create the required resources, open a new browser tab and enter the following address:
 
-    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab05.json)
+    [https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab05.json](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab05.json)
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -213,18 +213,18 @@ The simulated device that you create in this exercise represents an IoT device t
 
 1. Open **Visual Studio Code**.
 
-1. On the **File** menu, click **Open Folder** and then navigate to the Starter folder for Lab 5.
+1. On the **File** menu, click **Open Folder** and then navigate to the **Final** folder for Lab 5.
 
-    The Lab 5 Starter folder is part of the lab resources files that you downloaded when setting up your development environment in lab 3. The folder path is:
+    The Lab 5 **Final** folder is part of the lab resources files that you downloaded when setting up your development environment in lab 3. The folder path is:
 
     * Allfiles
       * Labs
           * 05-Individual Enrollment of a Device in DPS
-            * Starter
+            * Final
 
 1. In the **Open Folder** dialog, click **ContainerDevice**, and then click **Select Folder**.
 
-    The ContainerDevice folder is a sub-folder of the Lab 5 Starter folder. It contains a Program.cs file and a ContainerDevice.csproj file.
+    The ContainerDevice folder is a sub-folder of the Lab 5 **Final** folder. It contains a Program.cs file and a ContainerDevice.csproj file.
 
     > **Note**: If Visual Studio Code prompts you to load required assets, you can click **Yes** to load them.
 
@@ -317,6 +317,8 @@ In this exercise, you will run the Simulated Device and verify that it's sending
 In this task, you will use the Azure CLI to verify telemetry sent by the simulated device is being received by Azure IoT Hub.
 
 1. Using a browser, open the [Azure Cloud Shell](https://shell.azure.com/) and login with the Azure subscription you are using for this course.
+
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
 
 1. In the Azure Cloud Shell, enter the following command:
 

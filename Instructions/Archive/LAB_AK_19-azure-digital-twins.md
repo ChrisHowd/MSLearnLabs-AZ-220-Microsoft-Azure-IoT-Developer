@@ -91,6 +91,8 @@ To ensure these resources are available, complete the following tasks.
 
 1. To determine the current user object ID, open the **Cloud Shell** and execute the following command:
 
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
+
     ```sh
     az ad signed-in-user show --query objectId -o tsv
     ```

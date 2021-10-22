@@ -195,6 +195,8 @@ In this exercise, you will generate test certificates using Linux. You will do t
 
 1. On the Azure portal toolbar, click **Cloud Shell**
 
+    > **Note**: If the cloud shell has not been configured, follow the steps in **Lab 3 - Exercise 2 - Task 3: Configure cloud shell storage & Task 4: Install Azure CLI Extension - cloud environment**.
+
 1. At the Cloud Shell command prompt, paste the **ssh** command that you updated in the text editor, and then press **Enter**.
 
 1. When prompted with **Are you sure you want to continue connecting?**, type **yes** and then press **Enter**.
