@@ -61,7 +61,7 @@ To ensure these resources are available, complete the following tasks.
 
 1. Select **Deploy to Azure**:
 
-    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab07.json)
+    [https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab07.json](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab07.json)
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -273,7 +273,7 @@ In this exercise, you will create and test the logging route.
 
 1. In the [Azure Portal](https://portal.azure.com/), ensure that your IoT hub blade is open.
 
-1. On the left-hand menu, under **Messaging**, click **Message routing**.
+1. On the left-hand menu, under **Hub settings**, click **Message routing**.
 
 1. On the **Message routing** pane, ensure that the **Routes** tab is selected.
 
@@ -313,7 +313,9 @@ In this exercise, you will create and test the logging route.
 
     This keeps costs down at the expense of risk mitigation for disaster recovery. In production your solution may require a more robust replication strategy.
 
-1. Under **Location**, select the region that you are using for the labs in this course.
+1. Under **Location**, select **@lab.CloudResourceGroup(ResourceGroup1).Location**.
+
+1. Under **Minimum TLS version**, ensure **Version 1.2** is selected.
 
 1. To create the storage account endpoint, click **OK**.
 
@@ -357,9 +359,14 @@ In this exercise, you will create and test the logging route.
 
     The **File name format** field specifies the pattern used to write the data to files in storage. The various tokens are replace with values as the file is created.
 
+1. Under **Authentication type**, ensure **Key-based** is selected.
+
+
 1. At the bottom of the blade, to create your storage endpoint, click **Create**.
 
     Validation and subsequent creation will take a few moments. Once complete, you should be located back on the **Add a route** blade.
+
+    Notice that the **Endpoint** is now populated.
 
 #### Task 3: Define the routing query
 
@@ -395,11 +402,13 @@ In this exercise, you will create and test the logging route.
 
     You can use the Storage Explorer to verify that your data is being added to the storage account.
 
-    > **Note**:  The Storage Explorer is currently in preview mode, so its exact mode of operation may change.
+    > **Note**: The Storage Explorer is currently in preview mode, so its exact mode of operation may change.
 
 1. In **Storage Explorer (preview)** pane, expand **BLOB CONTAINERS**, and then click **vibrationcontainer**.
 
     To view the data, you will need to navigate down a hierarchy of folders. The first folder will be named for the IoT Hub.
+
+    > **Note**: If no data is displayed, wait a few moments and try again.
 
 1. In the right-hand pane, under **NAME**, double-click **iot-az220-training-{your-id}**, and then use double-clicks to navigate down into the hierarchy.
 
@@ -407,9 +416,17 @@ In this exercise, you will create and test the logging route.
 
 1. Double-click the Block Blob for the data with the earliest time stamp.
 
-    The URL link will open in a new browser tab. Although the data is not formatted in a way that is easy to read, you should be able to recognize it as your vibration messages.
+1. Click the **Click here to begin download** link.
 
-1. Close browser tab containing your data, and then navigate back to your Azure portal Dashboard.
+    A file named **{day_num}.avro** (i.e. **22.avro**) will be downloaded to the **Downloads** folder.
+
+1. Open the downloaded file with **Visual Studio Code** and click **Do you want to open it anyway**.
+
+    Although the data is not formatted in a way that is easy to read, you should be able to recognize it as your vibration messages.
+
+1. Close the **Visual Studio Code** document containing your data.
+
+1. Return to your Azure portal Dashboard.
 
 ### Exercise 4: Logging Route Azure Stream Analytics Job
 
@@ -441,7 +458,7 @@ This will enable you to verify that your route includes the following settings:
 
 1. Under **Resource group**, select **@lab.CloudResourceGroup(ResourceGroup1).Name**.
 
-1. Under **Location**, select the region that you are using for the labs in this course.
+1. Under **Location**, select **@lab.CloudResourceGroup(ResourceGroup1).Location**.
 
 1. Under **Hosting environment**, ensure that **Cloud** is selected.
 
@@ -461,6 +478,8 @@ This will enable you to verify that your route includes the following settings:
 
     Notice that you have an empty job, showing no inputs or outputs, and a skeleton query. The next step is to populate these entries.
 
+#### Task 2: Create the Stream Analytics Job Input
+
 1. On the left-side menu under **Job topology**, click **Inputs**.
 
     The **Inputs** pane will be displayed.
@@ -471,19 +490,24 @@ This will enable you to verify that your route includes the following settings:
 
 1. On the **IoT Hub - New input** pane, under **Input alias**, enter `vibrationInput`.
 
+
+1. Under **IoT Hub**, ensure that your **iot-az220-training-{your-id}** IoT hub is selected.
+
 1. Ensure that **Select IoT Hub from your subscriptions** is selected.
 
 1. Under **Subscription**, ensure that the subscription you used to create the IoT Hub earlier is selected.
 
 1. Under **IoT Hub**, ensure that your **iot-az220-training-{your-id}** IoT hub is selected.
 
-1. Under **Endpoint**, ensure that **Messaging** is selected.
+1. Under **Consumer group**, ensure that **$Default** is selected.
 
 1. Under **Shared access policy name**, ensure that **iothubowner** is selected.
 
     > **Note**:  The **Shared access policy key** is populated and read-only.
 
-1. Under **Consumer group**, ensure that **$Default** is selected.
+1. Under **Endpoint**, ensure that **Messaging** is selected.
+
+1. Leave **Partition key** blank.
 
 1. Under **Event serialization format**, ensure that **JSON** is selected.
 
@@ -497,15 +521,17 @@ This will enable you to verify that your route includes the following settings:
 
     The **Inputs** list should be updated to show the new input.
 
+#### Task 3: Create the Stream Analytics Job Output
+
 1. To create an output, on the left-side menu under **Job topology**, click **Outputs**.
 
     The **Outputs** pane is displayed.
 
-1. On the **Outputs** pane, click **+ Add**, and then click **Blob storage/Data Lake Storage Gen2**.
+1. On the **Outputs** pane, click **+ Add**, and then click **Blob storage/ADLS Gen2**.
 
-    The **Blob storage/Data Lake Storage Gen2 - New output** pane is displayed.
+    The **Blob storage/ADLS Gen2 - New output** pane is displayed.
 
-1. On the **Blob storage/Data Lake Storage Gen2 - New output** pane, under **Output alias**, enter `vibrationOutput`.
+1. On the **Blob storage/ADLS Gen2 - New output** pane, under **Output alias**, enter `vibrationOutput`.
 
 1. Ensure that **Select storage from your subscriptions** is selected.
 
@@ -516,6 +542,10 @@ This will enable you to verify that your route includes the following settings:
     > **Note**:  The **Storage account key** is automatically populated and read-only.
 
 1. Under **Container**, ensure that **Use existing** is selected and that **vibrationcontainer** is selected from the dropdown list.
+
+1. Under **Authentication Mode**, select **Connection string**
+
+    > **Note** that the **Storage account key** is displayed.
 
 1. Leave the **Path pattern** blank.
 
@@ -533,11 +563,11 @@ This will enable you to verify that your route includes the following settings:
 
 1. Under **Maximum time**, leave **Hours** and **Minutes** blank.
 
-1. Under **Authentication mode**, ensure that **Connection string** is selected.
-
 1. To create the output, click **Save**, and then wait for the output to be created.
 
     The **Outputs** list will be updated with the new output.
+
+#### Task 4: Create the Stream Analytics Job Query
 
 1. To edit the query, on the left-side menu under **Job topology**, click **Query**.
 
@@ -556,7 +586,7 @@ This will enable you to verify that your route includes the following settings:
 
 1. On the left-side menu, click **Overview**.
 
-#### Task 2: Test the Logging Route
+#### Task 5: Test the Logging Route
 
 Now for the fun part. Does the telemetry your device app is pumping out work its way along the route, and into the storage container?
 
@@ -576,9 +606,9 @@ Now for the fun part. Does the telemetry your device app is pumping out work its
 
     If your Storage account is not visible, use the **Refresh** button at the top of the resource group tile.
 
-1. On the **Overview** pane of your Storage account, scroll down until you can see the **Monitoring** section.
+1. On the **Overview** pane of your Storage account, select the **Monitoring** section.
 
-1. Under **Monitoring**, adjacent to **Show data for last**, change the time range to **1 hour**.
+1. Under **Key metrics**, adjacent to **Show data for last**, change the time range to **1 hour**.
 
     You should see activity in the charts.
 
@@ -590,11 +620,20 @@ Now for the fun part. Does the telemetry your device app is pumping out work its
 
 1. In **Storage Explorer (preview)**, under **BLOB CONTAINERS**, click **vibrationcontainer**.
 
-    To view the data, you will need to navigate down a hierarchy of folders. The first folder will be named for the IoT Hub, the next will be a partition, then year, month, day and finally hour.
+1. To view the data, select the json file and click **Download**, then click **Click here to download**.
 
-1. In the right-hand pane, under **Name**, double-click the folder for your IoT hub, and then use double-clicks to navigate down into the hierarchy until you open the most recent hour folder.
+1. Open the downloaded file with **Visual Studio Code**, and review the JSON data.
 
-    Within the hour folder, you will see files named for the minute they were generated. This verifies that your data is reaching the storage location as intended.
+    ```json
+    {"vibration":-0.025974767991863323,"EventProcessedUtcTime":"2021-10-22T22:03:10.8624609Z","PartitionId":3,"EventEnqueuedUtcTime":"2021-10-22T22:02:09.1180000Z","IoTHub":{"MessageId":null,"CorrelationId":null,"ConnectionDeviceId":"sensor-v-3000","ConnectionDeviceGenerationId":"637705296662649188","EnqueuedTime":"2021-10-22T22:02:08.7900000Z"}}
+    {"vibration":-2.6574811793183173,"EventProcessedUtcTime":"2021-10-22T22:03:10.9718423Z","PartitionId":3,"EventEnqueuedUtcTime":"2021-10-22T22:02:11.1030000Z","IoTHub":{"MessageId":null,"CorrelationId":null,"ConnectionDeviceId":"sensor-v-3000","ConnectionDeviceGenerationId":"637705296662649188","EnqueuedTime":"2021-10-22T22:02:11.0720000Z"}}
+    {"vibration":3.9654399589335796,"EventProcessedUtcTime":"2021-10-22T22:03:10.9718423Z","PartitionId":3,"EventEnqueuedUtcTime":"2021-10-22T22:02:13.3060000Z","IoTHub":{"MessageId":null,"CorrelationId":null,"ConnectionDeviceId":"sensor-v-3000","ConnectionDeviceGenerationId":"637705296662649188","EnqueuedTime":"2021-10-22T22:02:13.1500000Z"}}
+    {"vibration":0.99447803871677132,"EventProcessedUtcTime":"2021-10-22T22:03:10.9718423Z","PartitionId":3,"EventEnqueuedUtcTime":"2021-10-22T22:02:15.2910000Z","IoTHub":{"MessageId":null,"CorrelationId":null,"ConnectionDeviceId":"sensor-v-3000","ConnectionDeviceGenerationId":"637705296662649188","EnqueuedTime":"2021-10-22T22:02:15.2120000Z"}}
+    ```
+
+1. Close the **Visual Studio Code** document containing your data.
+
+1. Return to your Azure portal Dashboard.
 
 1. Navigate back to your Dashboard.
 

@@ -429,7 +429,7 @@ In this exercise, you will create and test the logging route.
 
     This keeps costs down at the expense of risk mitigation for disaster recovery. In production your solution may require a more robust replication strategy.
 
-1. Under **Location**, select the region that you are using for the labs in this course.
+1. Under **Location**, select **@lab.CloudResourceGroup(ResourceGroup1).Location**.
 
 1. To create the storage account endpoint, click **OK**.
 
@@ -617,11 +617,11 @@ This will enable you to verify that your route includes the following settings:
 
     The **Outputs** pane is displayed.
 
-1. On the **Outputs** pane, click **+ Add**, and then click **Blob storage/Data Lake Storage Gen2**.
+1. On the **Outputs** pane, click **+ Add**, and then click **Blob storage/ADLS Gen2**.
 
-    The **Blob storage/Data Lake Storage Gen2 - New output** pane is displayed.
+    The **Blob storage/ADLS Gen2 - New output** pane is displayed.
 
-1. On the **Blob storage/Data Lake Storage Gen2 - New output** pane, under **Output alias**, enter `vibrationOutput`.
+1. On the **Blob storage/ADLS Gen2 - New output** pane, under **Output alias**, enter `vibrationOutput`.
 
 1. Ensure that **Select storage from your subscriptions** is selected.
 

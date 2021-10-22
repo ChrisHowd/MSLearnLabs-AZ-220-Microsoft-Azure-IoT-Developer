@@ -388,7 +388,7 @@ There are several methods that you can use to create an instance of the IoT Hub 
 
     You will be grouping the resources that you create for this course together in the same resource group. It's a best practice to group related resources in this way, and will help you to clean up your resources when you no longer need them.
 
-1. Under **Location**, open the drop-down list and select the same region that you selected for your resource group.
+1. Under **Location**, select **@lab.CloudResourceGroup(ResourceGroup1).Location**.
 
     > **Note**: When picking a datacenter to host your resources, keep in mind that picking a datacenter close to your end users will decrease load/response times. If you are on the other side of the world from your end users, you should not be picking the datacenter nearest you.
 

@@ -275,7 +275,7 @@ In this task, you will use the Azure portal to create an Event Hubs resource.
 
     This name must be globally unique.
 
-1. Under **Location**, choose the same region that you have been using for the other labs in this course.
+1. Under **Location**, select **@lab.CloudResourceGroup(ResourceGroup1).Location**.
 
 1. In the **Pricing tier** dropdown, click **Standard**.
 
