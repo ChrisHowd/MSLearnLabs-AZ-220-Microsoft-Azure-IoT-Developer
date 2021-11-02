@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.4.451.19169",
-      "templateHash": "4473547612763490289"
+      "templateHash": "14874049713206193097"
     }
   },
   "parameters": {
@@ -55,7 +55,7 @@
   "variables": {
     "location": "[resourceGroup().location]",
     "iotHubName": "[format('iot-{0}-training-{1}', parameters('courseID'), parameters('yourID'))]",
-    "identityName": "[format('{0}ID', parameters('courseID'))]",
+    "identityName": "[format('{0}ID{1}', parameters('courseID'), uniqueString(resourceGroup().id))]",
     "contributorRoleDefinitionId": "[format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c', subscription().subscriptionId)]",
     "gatewayDeviceID": "[format('vm-az220-training-gw0002-{0}', parameters('yourID'))]",
     "deviceID": "sensor-th-0084",

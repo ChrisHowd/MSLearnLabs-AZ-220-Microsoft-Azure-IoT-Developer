@@ -1,0 +1,253 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "IotHubs_iot_az220_training_dm110221_connectionString": {
+            "type": "SecureString"
+        },
+        "IotHubs_iot_az220_training_dm110221_containerName": {
+            "type": "SecureString"
+        },
+        "storageAccounts_stodm110221_name": {
+            "defaultValue": "stodm110221",
+            "type": "String"
+        },
+        "IotHubs_iot_az220_training_dm110221_name": {
+            "defaultValue": "iot-az220-training-dm110221",
+            "type": "String"
+        },
+        "registries_acraz220trainingdm110221_name": {
+            "defaultValue": "acraz220trainingdm110221",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.ContainerRegistry/registries",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[parameters('registries_acraz220trainingdm110221_name')]",
+            "location": "westus2",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "properties": {
+                "adminUserEnabled": true,
+                "policies": {
+                    "quarantinePolicy": {
+                        "status": "disabled"
+                    },
+                    "trustPolicy": {
+                        "type": "Notary",
+                        "status": "disabled"
+                    },
+                    "retentionPolicy": {
+                        "days": 7,
+                        "status": "disabled"
+                    },
+                    "exportPolicy": {
+                        "status": "enabled"
+                    }
+                },
+                "encryption": {
+                    "status": "disabled"
+                },
+                "dataEndpointEnabled": false,
+                "publicNetworkAccess": "Enabled",
+                "networkRuleBypassOptions": "AzureServices",
+                "zoneRedundancy": "Disabled",
+                "anonymousPullEnabled": false
+            }
+        },
+        {
+            "type": "Microsoft.Devices/IotHubs",
+            "apiVersion": "2021-07-01",
+            "name": "[parameters('IotHubs_iot_az220_training_dm110221_name')]",
+            "location": "westus2",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "identity": {
+                "type": "None"
+            },
+            "properties": {
+                "ipFilterRules": [],
+                "eventHubEndpoints": {
+                    "events": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 4
+                    }
+                },
+                "routing": {
+                    "endpoints": {
+                        "serviceBusQueues": [],
+                        "serviceBusTopics": [],
+                        "eventHubs": [],
+                        "storageContainers": []
+                    },
+                    "routes": [],
+                    "fallbackRoute": {
+                        "name": "$fallback",
+                        "source": "DeviceMessages",
+                        "condition": "true",
+                        "endpointNames": [
+                            "events"
+                        ],
+                        "isEnabled": true
+                    }
+                },
+                "storageEndpoints": {
+                    "$default": {
+                        "sasTtlAsIso8601": "PT1H",
+                        "connectionString": "[parameters('IotHubs_iot_az220_training_dm110221_connectionString')]",
+                        "containerName": "[parameters('IotHubs_iot_az220_training_dm110221_containerName')]"
+                    }
+                },
+                "messagingEndpoints": {
+                    "fileNotifications": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "enableFileUploadNotifications": false,
+                "cloudToDevice": {
+                    "maxDeliveryCount": 10,
+                    "defaultTtlAsIso8601": "PT1H",
+                    "feedback": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "features": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-06-01",
+            "name": "[parameters('storageAccounts_stodm110221_name')]",
+            "location": "westus",
+            "tags": {
+                "ms-resource-usage": "azure-cloud-shell"
+            },
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "minimumTlsVersion": "TLS1_2",
+                "allowBlobPublicAccess": false,
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_stodm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_stodm110221_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_stodm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_stodm110221_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "protocolSettings": {
+                    "smb": {}
+                },
+                "cors": {
+                    "corsRules": []
+                },
+                "shareDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/queueServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_stodm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_stodm110221_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_stodm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_stodm110221_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_stodm110221_name'), '/default/console')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_stodm110221_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_stodm110221_name'))]"
+            ],
+            "properties": {
+                "accessTier": "TransactionOptimized",
+                "shareQuota": 6,
+                "enabledProtocols": "SMB"
+            }
+        }
+    ]
+}

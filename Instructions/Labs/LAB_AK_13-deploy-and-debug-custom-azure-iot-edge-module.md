@@ -55,9 +55,13 @@ This lab assumes that the following Azure resources are available:
 
 To ensure these resources are available, complete the following tasks.
 
-1. Select **Deploy to Azure**:
+1. To create the required resources, open a new browser tab and enter the following address:
 
-    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab13.json)
+    [https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab13.json](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab13.json)
+
+    ```url
+    https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab13.json
+    ```
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -419,7 +423,7 @@ In this exercise, you will build and run a custom IoT Edge Module solution using
 
     > **Important**: The Edge Simulator requires a privileged role for configuration. You would not use such a privileged role for normal use cases.
 
-1. In the **iothubowner** pane, copy the value for **Connection string--primary key**.
+1. In the **iothubowner** pane, copy the value for **Primary connection string**.
 
     Record this value, as you will need it below.
 

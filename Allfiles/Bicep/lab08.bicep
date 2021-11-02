@@ -5,7 +5,7 @@ param courseID string
 
 var location = resourceGroup().location
 var iotHubName = 'iot-${courseID}-training-${yourID}'
-var identityName = '${courseID}ID2'
+var identityName = '${courseID}ID${uniqueString(resourceGroup().id)}'
 // b24988ac-6180-42a0-ab88-20f7382dd24c is the Contributer role ID
 var contributorRoleDefinitionId = '/subscriptions/${subscription().subscriptionId}/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c'
 var deviceID = 'sensor-v-3000'
