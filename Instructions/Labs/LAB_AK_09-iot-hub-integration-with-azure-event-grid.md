@@ -80,22 +80,6 @@ To ensure these resources are available, complete the following tasks.
 
 The resources have now been created.
 
->**Note**: You may need to register the **microsoft.eventgrid** resource provider for this lab to be successful. Run the following command to check:
-
-```bash
-az provider show --namespace microsoft.eventgrid -o tsv
-```
-> If the results shows **Registered** nothing more is required. If **NotRegistered**, run the following command to register the **microsoft.eventgrid** provider:
-
-```bash
-az provider register --namespace microsoft.eventgrid
-```
-> This may take 15 minutes or longer to complete. You should see the following message:
-
-```bash
-Registering is still on-going. You can monitor using 'az provider show -n microsoft.eventgrid'
-```
-
 ### Exercise 2: Create HTTP Web Hook Logic App that sends an email
 
 Azure Logic Apps is a cloud service that helps you schedule, automate, and orchestrate tasks, business processes, and workflows when you need to integrate apps, data, systems, and services across enterprises or organizations.
@@ -152,7 +136,7 @@ In this exercise, you will create a new Azure Logic App that will be triggered v
 
     Starting out with one of the commonly used triggers is a convenient way to get started on your Logic App.
 
-1. Notice that the visual designer opens with the **When a HTTP request is received** trigger selected.
+1. Notice that the visual designer opens with the **When a HTTP request is received** trigger selected. Click the trigger to open the details.
 
 1. On the **When a HTTP request is received** trigger, under the **Request Body JSON Schema** textbox, click the **Use sample payload to generate schema** link.
 
@@ -208,11 +192,13 @@ In this exercise, you will create a new Azure Logic App that will be triggered v
 
     This sample JSON is an example of the JSON that Event Grid will POST to the Web Hook endpoint for the Logic App once it's created. This sample includes the IoT Hub Message Telemetry properties for the IoT Device that will be sending telemetry messages.
 
+    > **NOTE**: The **Enter or paste a sample JSON payload** field is a rich editor that automatically inserts opening and closing braces, etc. In the LODS environment, if the "type text" option is used to copy the JSON above directly into the **Enter or paste a sample JSON payload** field, extra braces will be added and the content will be invalid. Instead, open **Notepad** within the LODS VM first, and then send the text to **Notepad**. From there, you can copy the text into the field without error.
+
 1. Notice that the **Request Body JSON Schema** textbox is now populated with a JSON schema that was automatically generated based on the sample JSON that you provided.
 
-1. Below the **When a HTTP request is received** trigger, click **+ New step**.
+1. Below the **When a HTTP request is received** trigger, click **+** and select **Add an action**.
 
-1. Below **Choose an action**, in the search textbox, enter **Outlook.com**
+1. Click **Choose an operation** and in the search textbox, enter **Outlook.com**
 
 1. In the list of Actions, scroll down to the Send options, and then click **Send an email (V2)**.
 
@@ -290,9 +276,9 @@ In this exercise, you will create an Event Subscription within Azure IoT Hub to 
 
 1. On the Create Event Subscription blade, in the **Name** field, enter **MyDeviceCreateEvent**
 
-1. Ensure that the **EventSchema** filed is set to **Event Grid Schema**.
+1. Ensure that the **EventSchema** field is set to **Event Grid Schema**.
 
-1. Leave the **TOPIC DETAILS** section unchanged.
+1. Under the **TOPIC DETAILS** section, in the **System Topic Name** field, enter **device-creation**.
 
     This section is informational and read-only
 
