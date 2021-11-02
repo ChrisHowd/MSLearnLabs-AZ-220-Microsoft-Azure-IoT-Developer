@@ -53,7 +53,11 @@ To ensure these resources are available, complete the following tasks.
 
 1. Select **Deploy to Azure**:
 
-    [![Deploy To Azure](media/deploytoazure.png)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab10.json)
+    [https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab10.json](https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab10.json)
+
+    ```url
+    https://portal.azure.com/#create/Microsoft.Template/uri/https%3a%2f%2fraw.githubusercontent.com%2fMicrosoftLearning%2fMSLearnLabs-AZ-220-Microsoft-Azure-IoT-Developer%2fmaster%2fAllfiles%2FARM%2Flab10.json
+    ```
 
 1. If prompted, login to the **Azure Portal**.
 
@@ -129,11 +133,13 @@ In this exercise, you will setup Time Series Insights integration with Azure IoT
 
 1. On the **Time Series Insights** blade, click **Create**.
 
-1. On the **Create Time Series Insights environment** blade, in the **Environment name** field, enter **tsi-az220-training**
+1. On the **Create Time Series Insights environment** blade, in the **Environment name** field, enter **tsi-az220-training-{your-id}**
 
 1. In the **Subscription** dropdown, select the subscription that you are using for this course.
 
 1. In the **Resource group** dropdown, click **@lab.CloudResourceGroup(ResourceGroup1).Name**.
+
+1. In the **Environment name** field, enter **tsi-az220-training-{your-id}**.
 
 1. In the **Location** dropdown, select the Azure region used by your resource group.
 
@@ -145,7 +151,7 @@ In this exercise, you will setup Time Series Insights integration with Azure IoT
 
 1. In the **Source type** dropdown, ensure that **IoT Hub** is selected.
 
-1. In the **Name** field, enter **iot-az220-training-{your-id}** to specify a unique name for this Event Source.
+1. In the **Name** field, enter **iot-az220-training-{your-id}**
 
 1. In the **Subscription** dropdown, select the subscription that you are using for this course.
 
@@ -161,7 +167,7 @@ In this exercise, you will setup Time Series Insights integration with Azure IoT
 
     This will add a new _Consumer Group_ to use for this Event Source. The Consumer Group needs to be used exclusively for this Event Source, as there can only be a single active reader from a given Consumer Group at a time.
 
-1. Under the **Start options** section, in the **STart time** dropdown, select **Beginning now (default)**.
+1. Under the **Start options** section, in the **Start time** dropdown, select **Beginning now (default)**.
 
 1. Under the **TIMESTAMP** section, leave the **Property Name** blank.
 
@@ -175,11 +181,11 @@ In this exercise, you will setup Time Series Insights integration with Azure IoT
 
 1. Once your Time Series Insights deployment is complete, navigate back to your dashboard.
 
-1. Refresh your resource group tile, and then click **tsi-az220-training**.
+1. Refresh your resource group tile, and then click **tsi-az220-training-{your-id}**.
 
     You may need to resize your dashboard to see all of your resources.
 
-    > **Note**: You gave the **Time Series Insights environment** resource the name **tsi-az220-training**. You should also see the *Time Series Insights event source* that you created, but for now you want to have the TSI environment opened.
+    > **Note**: You gave the **Time Series Insights environment** resource the name **tsi-az220-training-{your-id}**. You should also see the *Time Series Insights event source* that you created, but for now you want to have the TSI environment opened.
 
 1. On the **Time Series Insights environment** blade, on the left-side menu under **Settings**, click **Event Sources**.
 
@@ -275,7 +281,7 @@ In this exercise, you will be introduced to working with time series data using 
 
     If you have more than one Azure account, be sure that you are logged in with the account that is tied to the subscription that you will be using for this course.
 
-1. On your Resource group tile, click **tsi-az220-training**.
+1. On your Resource group tile, click **tsi-az220-training-{your-id}**.
 
 1. On the **Time Series Insights environment** blade, at the top of the **Overview** pane, click **Go to TSI Explorer**.
 

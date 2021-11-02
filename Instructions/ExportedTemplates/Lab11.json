@@ -1,0 +1,669 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "IotHubs_iot_az220_training_dm110221_connectionString": {
+            "type": "SecureString"
+        },
+        "IotHubs_iot_az220_training_dm110221_containerName": {
+            "type": "SecureString"
+        },
+        "eventsources_iot_az220_training_dm110221_sharedAccessKey": {
+            "type": "SecureString"
+        },
+        "connections_outlook_name": {
+            "defaultValue": "outlook",
+            "type": "String"
+        },
+        "storageAccounts_stodm110221_name": {
+            "defaultValue": "stodm110221",
+            "type": "String"
+        },
+        "systemTopics_device_creation_name": {
+            "defaultValue": "device-creation",
+            "type": "String"
+        },
+        "IotHubs_iot_az220_training_dm110221_name": {
+            "defaultValue": "iot-az220-training-dm110221",
+            "type": "String"
+        },
+        "workflows_logic_az220_training_dm110221_name": {
+            "defaultValue": "logic-az220-training-dm110221",
+            "type": "String"
+        },
+        "userAssignedIdentities_az220ID_name": {
+            "defaultValue": "az220ID",
+            "type": "String"
+        },
+        "deploymentScripts_createDevice20211102T194752Z_name": {
+            "defaultValue": "createDevice20211102T194752Z",
+            "type": "String"
+        },
+        "deploymentScripts_createDevice20211102T195008Z_name": {
+            "defaultValue": "createDevice20211102T195008Z",
+            "type": "String"
+        },
+        "deploymentScripts_createDevice20211102T195217Z_name": {
+            "defaultValue": "createDevice20211102T195217Z",
+            "type": "String"
+        },
+        "environments_tsi_az220_training_dm110221_name": {
+            "defaultValue": "tsi-az220-training-dm110221",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Devices/IotHubs",
+            "apiVersion": "2021-07-01",
+            "name": "[parameters('IotHubs_iot_az220_training_dm110221_name')]",
+            "location": "westus2",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "identity": {
+                "type": "None"
+            },
+            "properties": {
+                "ipFilterRules": [],
+                "eventHubEndpoints": {
+                    "events": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 4
+                    }
+                },
+                "routing": {
+                    "endpoints": {
+                        "serviceBusQueues": [],
+                        "serviceBusTopics": [],
+                        "eventHubs": [],
+                        "storageContainers": []
+                    },
+                    "routes": [],
+                    "fallbackRoute": {
+                        "name": "$fallback",
+                        "source": "DeviceMessages",
+                        "condition": "true",
+                        "endpointNames": [
+                            "events"
+                        ],
+                        "isEnabled": true
+                    }
+                },
+                "storageEndpoints": {
+                    "$default": {
+                        "sasTtlAsIso8601": "PT1H",
+                        "connectionString": "[parameters('IotHubs_iot_az220_training_dm110221_connectionString')]",
+                        "containerName": "[parameters('IotHubs_iot_az220_training_dm110221_containerName')]"
+                    }
+                },
+                "messagingEndpoints": {
+                    "fileNotifications": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "enableFileUploadNotifications": false,
+                "cloudToDevice": {
+                    "maxDeliveryCount": 10,
+                    "defaultTtlAsIso8601": "PT1H",
+                    "feedback": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "features": "None"
+            }
+        },
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "apiVersion": "2018-11-30",
+            "name": "[parameters('userAssignedIdentities_az220ID_name')]",
+            "location": "westus2"
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "[parameters('deploymentScripts_createDevice20211102T194752Z_name')]",
+            "location": "westus2",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "tenantId": "4cc4dc8e-28ab-4b08-b517-2bd1d26defaa",
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/92a5590d-8d7f-44d1-9a46-4e7fab67784e/resourceGroups/ResourceGroup1lod19914459/providers/Microsoft.ManagedIdentity/userAssignedIdentities/az220ID": {
+                        "principalId": "8cf9a860-48f7-4eb5-848d-e54128f8e43a",
+                        "clientId": "bf25695b-3780-45ee-b5f8-67482d5aa264"
+                    }
+                }
+            },
+            "properties": {
+                "forceUpdateTag": "20211102T194752Z",
+                "azPowerShellVersion": "6.0",
+                "scriptContent": "param(\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $resourceGroup,\r\n\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $iotHub,\r\n\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $deviceName\r\n)\r\n\r\n$output = \"Adding $($deviceName) to $($iotHub)\"\r\nWrite-Output $output\r\n\r\n$deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName)\r\n\r\nif ($null -eq $deviceDetails)\r\n{\r\n    Add-AzIotHubDevice -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName -AuthMethod \"shared_private_key\"\r\n    $deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName)\r\n}\r\nelse\r\n{\r\n    Write-Output 'Device exists'\r\n}\r\n\r\n$DeploymentScriptOutputs = @{}\r\n$DeploymentScriptOutputs['text'] = $output\r\n$DeploymentScriptOutputs['date'] = (get-date -Format FileDate).toString()\r\n$DeploymentScriptOutputs['deviceId'] = $deviceDetails.DeviceId\r\n$DeploymentScriptOutputs['connectionString'] = $deviceDetails.ConnectionString\r\n# primary key\r\n$DeploymentScriptOutputs['primaryKey'] = ($deviceDetails.ConnectionString -replace ';', \"`r`n\" | ConvertFrom-StringData).SharedAccessKey\r\n\r\n# secondary key\r\n$deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -KeyType secondary -DeviceId $deviceName)\r\n$DeploymentScriptOutputs['secondaryKey'] = ($deviceDetails.ConnectionString -replace ';', \"`r`n\" | ConvertFrom-StringData).SharedAccessKey\r\n",
+                "arguments": "ResourceGroup1lod19914459 iot-az220-training-dm110221 sensor-thl-truck0001",
+                "retentionInterval": "PT1H",
+                "timeout": "PT10M",
+                "containerSettings": {},
+                "cleanupPreference": "Always"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "[parameters('deploymentScripts_createDevice20211102T195008Z_name')]",
+            "location": "westus2",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "tenantId": "4cc4dc8e-28ab-4b08-b517-2bd1d26defaa",
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/92a5590d-8d7f-44d1-9a46-4e7fab67784e/resourceGroups/ResourceGroup1lod19914459/providers/Microsoft.ManagedIdentity/userAssignedIdentities/az220ID": {
+                        "principalId": "8cf9a860-48f7-4eb5-848d-e54128f8e43a",
+                        "clientId": "bf25695b-3780-45ee-b5f8-67482d5aa264"
+                    }
+                }
+            },
+            "properties": {
+                "forceUpdateTag": "20211102T195008Z",
+                "azPowerShellVersion": "6.0",
+                "scriptContent": "param(\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $resourceGroup,\r\n\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $iotHub,\r\n\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $deviceName\r\n)\r\n\r\n$output = \"Adding $($deviceName) to $($iotHub)\"\r\nWrite-Output $output\r\n\r\n$deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName)\r\n\r\nif ($null -eq $deviceDetails)\r\n{\r\n    Add-AzIotHubDevice -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName -AuthMethod \"shared_private_key\"\r\n    $deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName)\r\n}\r\nelse\r\n{\r\n    Write-Output 'Device exists'\r\n}\r\n\r\n$DeploymentScriptOutputs = @{}\r\n$DeploymentScriptOutputs['text'] = $output\r\n$DeploymentScriptOutputs['date'] = (get-date -Format FileDate).toString()\r\n$DeploymentScriptOutputs['deviceId'] = $deviceDetails.DeviceId\r\n$DeploymentScriptOutputs['connectionString'] = $deviceDetails.ConnectionString\r\n# primary key\r\n$DeploymentScriptOutputs['primaryKey'] = ($deviceDetails.ConnectionString -replace ';', \"`r`n\" | ConvertFrom-StringData).SharedAccessKey\r\n\r\n# secondary key\r\n$deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -KeyType secondary -DeviceId $deviceName)\r\n$DeploymentScriptOutputs['secondaryKey'] = ($deviceDetails.ConnectionString -replace ';', \"`r`n\" | ConvertFrom-StringData).SharedAccessKey\r\n",
+                "arguments": "ResourceGroup1lod19914459 iot-az220-training-dm110221 sensor-thl-airplane0001",
+                "retentionInterval": "PT1H",
+                "timeout": "PT10M",
+                "containerSettings": {},
+                "cleanupPreference": "Always"
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "[parameters('deploymentScripts_createDevice20211102T195217Z_name')]",
+            "location": "westus2",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "tenantId": "4cc4dc8e-28ab-4b08-b517-2bd1d26defaa",
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/92a5590d-8d7f-44d1-9a46-4e7fab67784e/resourceGroups/ResourceGroup1lod19914459/providers/Microsoft.ManagedIdentity/userAssignedIdentities/az220ID": {
+                        "principalId": "8cf9a860-48f7-4eb5-848d-e54128f8e43a",
+                        "clientId": "bf25695b-3780-45ee-b5f8-67482d5aa264"
+                    }
+                }
+            },
+            "properties": {
+                "forceUpdateTag": "20211102T195217Z",
+                "azPowerShellVersion": "6.0",
+                "scriptContent": "param(\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $resourceGroup,\r\n\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $iotHub,\r\n\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $deviceName\r\n)\r\n\r\n$output = \"Adding $($deviceName) to $($iotHub)\"\r\nWrite-Output $output\r\n\r\n$deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName)\r\n\r\nif ($null -eq $deviceDetails)\r\n{\r\n    Add-AzIotHubDevice -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName -AuthMethod \"shared_private_key\"\r\n    $deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName)\r\n}\r\nelse\r\n{\r\n    Write-Output 'Device exists'\r\n}\r\n\r\n$DeploymentScriptOutputs = @{}\r\n$DeploymentScriptOutputs['text'] = $output\r\n$DeploymentScriptOutputs['date'] = (get-date -Format FileDate).toString()\r\n$DeploymentScriptOutputs['deviceId'] = $deviceDetails.DeviceId\r\n$DeploymentScriptOutputs['connectionString'] = $deviceDetails.ConnectionString\r\n# primary key\r\n$DeploymentScriptOutputs['primaryKey'] = ($deviceDetails.ConnectionString -replace ';', \"`r`n\" | ConvertFrom-StringData).SharedAccessKey\r\n\r\n# secondary key\r\n$deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -KeyType secondary -DeviceId $deviceName)\r\n$DeploymentScriptOutputs['secondaryKey'] = ($deviceDetails.ConnectionString -replace ';', \"`r`n\" | ConvertFrom-StringData).SharedAccessKey\r\n",
+                "arguments": "ResourceGroup1lod19914459 iot-az220-training-dm110221 sensor-thl-container0001",
+                "retentionInterval": "PT1H",
+                "timeout": "PT10M",
+                "containerSettings": {},
+                "cleanupPreference": "Always"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-06-01",
+            "name": "[parameters('storageAccounts_stodm110221_name')]",
+            "location": "westus",
+            "tags": {
+                "ms-resource-usage": "azure-cloud-shell"
+            },
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "minimumTlsVersion": "TLS1_2",
+                "allowBlobPublicAccess": false,
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.TimeSeriesInsights/environments",
+            "apiVersion": "2021-03-31-preview",
+            "name": "[parameters('environments_tsi_az220_training_dm110221_name')]",
+            "location": "westus2",
+            "sku": {
+                "name": "S1",
+                "capacity": 1
+            },
+            "kind": "Gen1",
+            "properties": {
+                "dataRetentionTime": "P30D",
+                "storageLimitExceededBehavior": "PurgeOldData"
+            }
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[parameters('connections_outlook_name')]",
+            "location": "westus2",
+            "kind": "V1",
+            "properties": {
+                "displayName": "Outlook.com",
+                "statuses": [
+                    {
+                        "status": "Connected"
+                    }
+                ],
+                "customParameterValues": {},
+                "nonSecretParameterValues": {},
+                "createdTime": "2021-11-02T19:01:08.6040336Z",
+                "changedTime": "2021-11-02T19:02:43.2798853Z",
+                "api": {
+                    "name": "[parameters('connections_outlook_name')]",
+                    "displayName": "Outlook.com",
+                    "description": "Outlook.com connector allows you to manage your mail, calendars, and contacts. You can perform various actions such as send mail, schedule meetings, add contacts, etc.",
+                    "iconUri": "[concat('https://connectoricons-prod.azureedge.net/releases/v1.0.1527/1.0.1527.2580/', parameters('connections_outlook_name'), '/icon.png')]",
+                    "brandColor": "#0078D4",
+                    "id": "[concat('/subscriptions/92a5590d-8d7f-44d1-9a46-4e7fab67784e/providers/Microsoft.Web/locations/westus2/managedApis/', parameters('connections_outlook_name'))]",
+                    "type": "Microsoft.Web/locations/managedApis"
+                },
+                "testLinks": [
+                    {
+                        "requestUri": "[concat('https://management.azure.com:443/subscriptions/92a5590d-8d7f-44d1-9a46-4e7fab67784e/resourceGroups/ResourceGroup1lod19914459/providers/Microsoft.Web/connections/', parameters('connections_outlook_name'), '/extensions/proxy/testconnection?api-version=2016-06-01')]",
+                        "method": "get"
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.EventGrid/systemTopics",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[parameters('systemTopics_device_creation_name')]",
+            "location": "westus2",
+            "dependsOn": [
+                "[resourceId('Microsoft.Devices/IotHubs', parameters('IotHubs_iot_az220_training_dm110221_name'))]"
+            ],
+            "properties": {
+                "source": "[resourceId('Microsoft.Devices/IotHubs', parameters('IotHubs_iot_az220_training_dm110221_name'))]",
+                "topicType": "Microsoft.Devices.IoTHubs"
+            }
+        },
+        {
+            "type": "Microsoft.EventGrid/systemTopics/eventSubscriptions",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('systemTopics_device_creation_name'), '/MyDeviceCreateEvent')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.EventGrid/systemTopics', parameters('systemTopics_device_creation_name'))]"
+            ],
+            "properties": {
+                "destination": {
+                    "properties": {
+                        "maxEventsPerBatch": 1,
+                        "preferredBatchSizeInKilobytes": 64
+                    },
+                    "endpointType": "WebHook"
+                },
+                "filter": {
+                    "includedEventTypes": [
+                        "Microsoft.Devices.DeviceCreated"
+                    ],
+                    "enableAdvancedFilteringOnArrays": true,
+                    "advancedFilters": [
+                        {
+                            "values": [
+                                "devices/sensor-th"
+                            ],
+                            "operatorType": "StringBeginsWith",
+                            "key": "Subject"
+                        }
+                    ]
+                },
+                "labels": [],
+                "eventDeliverySchema": "EventGridSchema",
+                "retryPolicy": {
+                    "maxDeliveryAttempts": 30,
+                    "eventTimeToLiveInMinutes": 1440
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('workflows_logic_az220_training_dm110221_name')]",
+            "location": "westus2",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', parameters('connections_outlook_name'))]"
+            ],
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "manual": {
+                            "type": "Request",
+                            "kind": "Http",
+                            "inputs": {
+                                "schema": {
+                                    "items": {
+                                        "properties": {
+                                            "data": {
+                                                "properties": {
+                                                    "deviceId": {
+                                                        "type": "string"
+                                                    },
+                                                    "hubName": {
+                                                        "type": "string"
+                                                    },
+                                                    "twin": {
+                                                        "properties": {
+                                                            "authenticationType": {
+                                                                "type": "string"
+                                                            },
+                                                            "cloudToDeviceMessageCount": {
+                                                                "type": "integer"
+                                                            },
+                                                            "connectionState": {
+                                                                "type": "string"
+                                                            },
+                                                            "deviceEtag": {
+                                                                "type": "string"
+                                                            },
+                                                            "deviceId": {
+                                                                "type": "string"
+                                                            },
+                                                            "etag": {
+                                                                "type": "string"
+                                                            },
+                                                            "lastActivityTime": {
+                                                                "type": "string"
+                                                            },
+                                                            "properties": {
+                                                                "properties": {
+                                                                    "desired": {
+                                                                        "properties": {
+                                                                            "$metadata": {
+                                                                                "properties": {
+                                                                                    "$lastUpdated": {
+                                                                                        "type": "string"
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            },
+                                                                            "$version": {
+                                                                                "type": "integer"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    },
+                                                                    "reported": {
+                                                                        "properties": {
+                                                                            "$metadata": {
+                                                                                "properties": {
+                                                                                    "$lastUpdated": {
+                                                                                        "type": "string"
+                                                                                    }
+                                                                                },
+                                                                                "type": "object"
+                                                                            },
+                                                                            "$version": {
+                                                                                "type": "integer"
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            },
+                                                            "status": {
+                                                                "type": "string"
+                                                            },
+                                                            "statusUpdateTime": {
+                                                                "type": "string"
+                                                            },
+                                                            "version": {
+                                                                "type": "integer"
+                                                            },
+                                                            "x509Thumbprint": {
+                                                                "properties": {
+                                                                    "primaryThumbprint": {},
+                                                                    "secondaryThumbprint": {}
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            },
+                                            "dataVersion": {
+                                                "type": "string"
+                                            },
+                                            "eventTime": {
+                                                "type": "string"
+                                            },
+                                            "eventType": {
+                                                "type": "string"
+                                            },
+                                            "id": {
+                                                "type": "string"
+                                            },
+                                            "metadataVersion": {
+                                                "type": "string"
+                                            },
+                                            "subject": {
+                                                "type": "string"
+                                            },
+                                            "topic": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "required": [
+                                            "id",
+                                            "topic",
+                                            "subject",
+                                            "eventType",
+                                            "eventTime",
+                                            "data",
+                                            "dataVersion",
+                                            "metadataVersion"
+                                        ],
+                                        "type": "object"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    },
+                    "actions": {
+                        "For_each": {
+                            "foreach": "@triggerBody()",
+                            "actions": {
+                                "Send_an_email_(V2)": {
+                                    "runAfter": {},
+                                    "type": "ApiConnection",
+                                    "inputs": {
+                                        "body": {
+                                            "Body": "<p>This is an automated email to inform you that:<br>\n<br>\n@{items('For_each')['eventType']} occurred at @{items('For_each')['eventTime']}<br>\n<br>\nIoT Hub: @{items('For_each')?['data']?['hubName']}<br>\nDevice ID: @{items('For_each')?['data']?['twin']?['deviceId']}<br>\nConnection state: @{items('For_each')?['data']?['twin']?['connectionState']}</p>",
+                                            "Subject": "IoT Hub alert:",
+                                            "To": "daren.may@gmail.com"
+                                        },
+                                        "host": {
+                                            "connection": {
+                                                "name": "@parameters('$connections')['outlook']['connectionId']"
+                                            }
+                                        },
+                                        "method": "post",
+                                        "path": "/v2/Mail"
+                                    }
+                                }
+                            },
+                            "runAfter": {},
+                            "type": "Foreach"
+                        }
+                    },
+                    "outputs": {}
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "outlook": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', parameters('connections_outlook_name'))]",
+                                "connectionName": "outlook",
+                                "id": "/subscriptions/92a5590d-8d7f-44d1-9a46-4e7fab67784e/providers/Microsoft.Web/locations/westus2/managedApis/outlook"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_stodm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_stodm110221_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_stodm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_stodm110221_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "protocolSettings": {
+                    "smb": {}
+                },
+                "cors": {
+                    "corsRules": []
+                },
+                "shareDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/queueServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_stodm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_stodm110221_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_stodm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_stodm110221_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.TimeSeriesInsights/environments/accesspolicies",
+            "apiVersion": "2021-03-31-preview",
+            "name": "[concat(parameters('environments_tsi_az220_training_dm110221_name'), '/ownerAccessPolicyName')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.TimeSeriesInsights/environments', parameters('environments_tsi_az220_training_dm110221_name'))]"
+            ],
+            "properties": {
+                "principalObjectId": "b5ee66c2-e1da-4621-b7e7-ffb24686d359",
+                "roles": [
+                    "Reader",
+                    "Contributor"
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_stodm110221_name'), '/default/console')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_stodm110221_name'), 'default')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_stodm110221_name'))]"
+            ],
+            "properties": {
+                "accessTier": "TransactionOptimized",
+                "shareQuota": 6,
+                "enabledProtocols": "SMB"
+            }
+        },
+        {
+            "type": "Microsoft.TimeSeriesInsights/environments/eventsources",
+            "apiVersion": "2021-03-31-preview",
+            "name": "[concat(parameters('environments_tsi_az220_training_dm110221_name'), '/iot-az220-training-dm110221')]",
+            "location": "westus2",
+            "dependsOn": [
+                "[resourceId('Microsoft.TimeSeriesInsights/environments', parameters('environments_tsi_az220_training_dm110221_name'))]",
+                "[resourceId('Microsoft.Devices/IotHubs', parameters('IotHubs_iot_az220_training_dm110221_name'))]"
+            ],
+            "kind": "Microsoft.IoTHub",
+            "properties": {
+                "eventSourceResourceId": "[resourceId('Microsoft.Devices/IotHubs', parameters('IotHubs_iot_az220_training_dm110221_name'))]",
+                "iotHubName": "iot-az220-training-dm110221",
+                "keyName": "iothubowner",
+                "consumerGroupName": "tsievents",
+                "ingressStartAt": {
+                    "type": "EventSourceCreationTime"
+                },
+                "provisioningState": "Succeeded",
+                "sharedAccessKey": "[parameters('eventsources_iot_az220_training_dm110221_sharedAccessKey')]"
+            }
+        }
+    ]
+}
