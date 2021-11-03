@@ -149,8 +149,8 @@ A resource group is a logical group that contains related resources for a projec
 
 In this exercise, you will:
 
-* create a custom dashboard that you can use during this course
-* create a Resource Group and add a Resource Group tile to your dashboard
+* create a custom dashboard
+* add a Resource Group tile to a dashboard
 
 #### Task 1: Create a Dashboard
 
@@ -162,7 +162,7 @@ In this exercise, you will:
 
 1. On the **My Dashboard** page, click **+ New dashboard**
 
-    You can create a custom dashboard to organize and access your Azure resources for a project. In this case, you will create a custom dashboard for this course.
+    You can create a custom dashboard to organize and access your Azure resources for a project.
 
 1. Select **Blank dashboard**.
 
@@ -176,7 +176,7 @@ In this exercise, you will:
 
 #### Task 2: Add a Resource Group tile to your Dashboard
 
-As this lab is executed within a training environment, a resource group is provided - **@lab.CloudResourceGroup(ResourceGroup1).Name**. In this task, the resource group will be added to the Dashboard crfeated above.
+As this lab is executed within a training environment, a resource group is provided - **@lab.CloudResourceGroup(ResourceGroup1).Name**. In this task, the resource group will be added to the Dashboard created above.
 
 1. On the Azure portal menu, click **Resource groups**
 
