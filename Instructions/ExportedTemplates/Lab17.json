@@ -1,0 +1,272 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "IotHubs_iot_az220_training_dm110221_connectionString": {
+            "type": "SecureString"
+        },
+        "IotHubs_iot_az220_training_dm110221_containerName": {
+            "type": "SecureString"
+        },
+        "IotHubs_iot_az220_training_dm110221_name": {
+            "defaultValue": "iot-az220-training-dm110221",
+            "type": "String"
+        },
+        "userAssignedIdentities_az220ID_name": {
+            "defaultValue": "az220ID",
+            "type": "String"
+        },
+        "storageAccounts_staaz220trainingdm110221_name": {
+            "defaultValue": "staaz220trainingdm110221",
+            "type": "String"
+        },
+        "provisioningServices_dps_az220_training_dm110221_name": {
+            "defaultValue": "dps-az220-training-dm110221",
+            "type": "String"
+        },
+        "deploymentScripts_createDevice20211102T233351Z_name": {
+            "defaultValue": "createDevice20211102T233351Z",
+            "type": "String"
+        },
+        "userAssignedIdentities_az220IDq7tpkr6vxvhf4_name": {
+            "defaultValue": "az220IDq7tpkr6vxvhf4",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Devices/IotHubs",
+            "apiVersion": "2021-07-01",
+            "name": "[parameters('IotHubs_iot_az220_training_dm110221_name')]",
+            "location": "westus2",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "identity": {
+                "type": "None"
+            },
+            "properties": {
+                "ipFilterRules": [],
+                "eventHubEndpoints": {
+                    "events": {
+                        "retentionTimeInDays": 1,
+                        "partitionCount": 4
+                    }
+                },
+                "routing": {
+                    "endpoints": {
+                        "serviceBusQueues": [],
+                        "serviceBusTopics": [],
+                        "eventHubs": [],
+                        "storageContainers": []
+                    },
+                    "routes": [],
+                    "fallbackRoute": {
+                        "name": "$fallback",
+                        "source": "DeviceMessages",
+                        "condition": "true",
+                        "endpointNames": [
+                            "events"
+                        ],
+                        "isEnabled": true
+                    }
+                },
+                "storageEndpoints": {
+                    "$default": {
+                        "sasTtlAsIso8601": "PT1H",
+                        "connectionString": "[parameters('IotHubs_iot_az220_training_dm110221_connectionString')]",
+                        "containerName": "[parameters('IotHubs_iot_az220_training_dm110221_containerName')]"
+                    }
+                },
+                "messagingEndpoints": {
+                    "fileNotifications": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "enableFileUploadNotifications": false,
+                "cloudToDevice": {
+                    "maxDeliveryCount": 10,
+                    "defaultTtlAsIso8601": "PT1H",
+                    "feedback": {
+                        "lockDurationAsIso8601": "PT1M",
+                        "ttlAsIso8601": "PT1H",
+                        "maxDeliveryCount": 10
+                    }
+                },
+                "features": "None"
+            }
+        },
+        {
+            "type": "Microsoft.Devices/provisioningServices",
+            "apiVersion": "2020-03-01",
+            "name": "[parameters('provisioningServices_dps_az220_training_dm110221_name')]",
+            "location": "westus2",
+            "sku": {
+                "name": "S1",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "properties": {
+                "state": "Active",
+                "provisioningState": "Succeeded",
+                "iotHubs": [
+                    {
+                        "connectionString": "HostName=iot-az220-training-dm110221.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=****",
+                        "location": "westus2"
+                    }
+                ],
+                "allocationPolicy": "Hashed"
+            }
+        },
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "apiVersion": "2018-11-30",
+            "name": "[parameters('userAssignedIdentities_az220ID_name')]",
+            "location": "westus2"
+        },
+        {
+            "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+            "apiVersion": "2018-11-30",
+            "name": "[parameters('userAssignedIdentities_az220IDq7tpkr6vxvhf4_name')]",
+            "location": "westus2"
+        },
+        {
+            "type": "Microsoft.Resources/deploymentScripts",
+            "apiVersion": "2020-10-01",
+            "name": "[parameters('deploymentScripts_createDevice20211102T233351Z_name')]",
+            "location": "westus2",
+            "kind": "AzurePowerShell",
+            "identity": {
+                "tenantId": "4cc4dc8e-28ab-4b08-b517-2bd1d26defaa",
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/92a5590d-8d7f-44d1-9a46-4e7fab67784e/resourceGroups/ResourceGroup1lod19914459/providers/Microsoft.ManagedIdentity/userAssignedIdentities/az220IDq7tpkr6vxvhf4": {
+                        "principalId": "3e7517e1-4c04-4e09-84e1-6606e32b0d2c",
+                        "clientId": "9428f896-d257-47db-acb5-74ca775a880e"
+                    }
+                }
+            },
+            "properties": {
+                "forceUpdateTag": "20211102T233351Z",
+                "azPowerShellVersion": "6.0",
+                "scriptContent": "param(\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $resourceGroup,\r\n\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $iotHub,\r\n\r\n    [Parameter(Mandatory = $true)]\r\n    [string]\r\n    $deviceName\r\n)\r\n\r\n$output = \"Adding $($deviceName) to $($iotHub)\"\r\nWrite-Output $output\r\n\r\n$deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName)\r\n\r\nif ($null -eq $deviceDetails)\r\n{\r\n    Add-AzIotHubDevice -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName -AuthMethod \"shared_private_key\"\r\n    $deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -DeviceId $deviceName)\r\n}\r\nelse\r\n{\r\n    Write-Output 'Device exists'\r\n}\r\n\r\n$DeploymentScriptOutputs = @{}\r\n$DeploymentScriptOutputs['text'] = $output\r\n$DeploymentScriptOutputs['date'] = (get-date -Format FileDate).toString()\r\n$DeploymentScriptOutputs['deviceId'] = $deviceDetails.DeviceId\r\n$DeploymentScriptOutputs['connectionString'] = $deviceDetails.ConnectionString\r\n# primary key\r\n$DeploymentScriptOutputs['primaryKey'] = ($deviceDetails.ConnectionString -replace ';', \"`r`n\" | ConvertFrom-StringData).SharedAccessKey\r\n\r\n# secondary key\r\n$deviceDetails = (Get-AzIotHubDeviceConnectionString -ResourceGroupName $resourceGroup -IotHubName $iotHub -KeyType secondary -DeviceId $deviceName)\r\n$DeploymentScriptOutputs['secondaryKey'] = ($deviceDetails.ConnectionString -replace ';', \"`r`n\" | ConvertFrom-StringData).SharedAccessKey\r\n",
+                "arguments": "ResourceGroup1lod19914459 iot-az220-training-dm110221 sensor-th-0055",
+                "retentionInterval": "PT1H",
+                "timeout": "PT10M",
+                "containerSettings": {},
+                "cleanupPreference": "Always"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-06-01",
+            "name": "[parameters('storageAccounts_staaz220trainingdm110221_name')]",
+            "location": "westus2",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "minimumTlsVersion": "TLS1_0",
+                "allowBlobPublicAccess": true,
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_staaz220trainingdm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_staaz220trainingdm110221_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_staaz220trainingdm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_staaz220trainingdm110221_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "protocolSettings": {
+                    "smb": {}
+                },
+                "cors": {
+                    "corsRules": []
+                },
+                "shareDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/queueServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_staaz220trainingdm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_staaz220trainingdm110221_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices",
+            "apiVersion": "2021-06-01",
+            "name": "[concat(parameters('storageAccounts_staaz220trainingdm110221_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_staaz220trainingdm110221_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        }
+    ]
+}

@@ -41,6 +41,8 @@ In this lab, you will complete the following activities:
 
 ### Exercise 1: Verify Lab Prerequisites
 
+**Important**: Due to resource restrictions, this lab cannot be run in the Learning On-Demand Environment and should be run within a personal Azure Subscription.
+
 This lab assumes that the following Azure resources are available:
 
 | Resource Type | Resource Name |
